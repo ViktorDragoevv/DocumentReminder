@@ -1,8 +1,10 @@
-﻿using Document.Models;
+﻿using Document.Configurations;
+using Document.Models;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Reflection.Emit;
 
 namespace Document.Data
 {
@@ -15,5 +17,16 @@ namespace Document.Data
         }
         public DbSet<Document.Models.CategoryModel> CategoryModel { get; set; } = default!;
         public DbSet<Document.Models.ContactsModel> ContactsModel { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            //builder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            builder.ApplyConfiguration(new ContactConfiguration());
+        }
     }
+
+
 }
