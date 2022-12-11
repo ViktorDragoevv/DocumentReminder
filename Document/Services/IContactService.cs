@@ -4,8 +4,9 @@ namespace Document.Services
 {
     public interface IContactService
     {
-        Task<IEnumerable<ContactsModel>> GetAllContacts();
+        Task<IEnumerable<ViewContact>> GetAllContacts();
         Task<ContactsModel> GetContactByID(Guid id);
-        Task<ContactsModel> UpdateContactByID(ContactsModel contact);
+        Task<ContactsModel> UpdateContactByID(CreateUpdateContact contact, Guid id);
+        Task<ContactsModel> CreateContact(CreateUpdateContact contact);
     }
 }

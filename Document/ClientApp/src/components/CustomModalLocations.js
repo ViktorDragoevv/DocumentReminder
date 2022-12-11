@@ -1,7 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'antd';
-import { SmileOutlined } from '@ant-design/icons';
-import * as yup from "yup";
 import {
     Cascader,
     DatePicker,
@@ -15,39 +13,16 @@ import {
 } from 'antd';
 
 
-let schema = yup.object().shape({
-    name: yup.string().required(),
-    age: yup
-        .number()
-        .required()
-        .typeError('Number only.')
-        .positive()
-        .integer()
-        .round(),
-});
-
-const yupSync = {
-    async validator({ field }, value) {
-        await schema.validateSyncAt(field, { [field]: value });
-    },
-};
-
-
-
-
-function CustomModalContacts(props) {
+function CustomModalLocations(props) {
 
     const [contactObject, setContactObject] = useState();
-    const [locations, setLocations] = useState();
-    const [defValueSelect, setDefValueSelect] = useState();
-    console.log(contactObject);
-
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalText, setModalText] = useState('Content of the modal');
     const { Option } = Select;
-    //let [locationOptions, setLocationOptions] = useState();
-    //const [contactObjectFromParent, setContactObjectFromParent] = useState();
+
+
+
 
 
     const showModal = () => {
@@ -86,7 +61,7 @@ function CustomModalContacts(props) {
 
         var jsonData = {
             "firstName": input.firstName,
-            "lastName": input.lastName,
+            "lastName": input.firstName,
             "email": input.email,
             "phoneNumber": input.phoneNumber
         }
@@ -109,7 +84,7 @@ function CustomModalContacts(props) {
     const editCategory = async (input) => {
 
         console.log(input.id);
-        var jsonDataa = { ...input, id: contactObject.id, locationID: input.location };
+        var jsonDataa = { ...input, id: contactObject.id, locationID: contactObject.locationID };
         console.log("vliza:");
         //'console.log(JSON.stringify(...input,contactObject.id));
         console.log(jsonDataa);
@@ -124,25 +99,6 @@ function CustomModalContacts(props) {
         props.update(jsonDataa);
 
     }
-
-    /*const  loadLocation = async () => {
-
-        async function fetchData() {
-
-            const token = await authService.getAccessToken();
-            const response = await fetch('https://localhost:7174/api/LocationModels', {
-                headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
-                //headers: { 'Access-Control-Allow-Origin': '*' },
-                //headers: { 'content-type': 'application/json; charset=utf-8' }
-            });
-            let data = await response.json();
-            setDataLocations(AddKeyProp(data));
-
-            console.log(data);
-        };
-        setLocations(locations.data);
-        console.log(response);
-    }*/
 
     const handleChange = e => {
         //setInput(e.target.value);
@@ -164,7 +120,7 @@ function CustomModalContacts(props) {
     };
 
     const submit = (values) => {
-        
+
         setOpen(false);
         if (props.status == 1) {
             addcategory(values);
@@ -189,42 +145,19 @@ function CustomModalContacts(props) {
         }
     }
 
-    
 
     const [form] = Form.useForm();
     React.useEffect(() => {
-        
-        
         form.setFieldsValue({
             firstName: contactObject?.firstName,
             lastName: contactObject?.lastName,
             email: contactObject?.email,
             phoneNumber: contactObject?.phoneNumber,
-            location: {
-                value: contactObject?.location?.id,
-                label: contactObject?.location?.name,
-            }
+            locationID: contactObject?.locationID,
         });
-        async function fetchData() {
-
-            
-            const response = await fetch('https://localhost:7174/api/LocationModels', {
-            });
-            let data = await response.json();
-            const optionsforSelect = data.map((location, index) => ({
-
-                value: location.id,
-                label: location.name,
-
-            }))
-            setLocations(optionsforSelect);
-            console.log(optionsforSelect);
-            
-        };
-
-        fetchData();
         //setLocationOptions(contactObject?.locationID);
     }, [contactObject]);
+
 
     return (
         <>
@@ -239,11 +172,11 @@ function CustomModalContacts(props) {
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={null}
-                forceRender 
+                forceRender
 
             >
 
-                
+
 
 
 
@@ -259,7 +192,7 @@ function CustomModalContacts(props) {
                         console.log({ error });
                     }}
                     form={form}
-                    
+
                 >
                     <Form.Item
                         name="firstName"
@@ -325,20 +258,22 @@ function CustomModalContacts(props) {
                     </Form.Item>
 
                     <Form.Item name="location" label="Location" requiredMark="optional">
-                        <Select placeholder="Select your location" options={locations ?? []} >
+                        <Select placeholder="Select your location">
 
-                            
-                                    
+                            <Option value={contactObject?.locationID}>
+                                {contactObject?.locationID}
+                            </Option>
+
                         </Select>
                     </Form.Item>
-                    
 
 
-                   
+
+
 
                     <Form.Item wrapperCol={{ span: 24 }}>
                         <Button block type="primary" htmlType="submit">
-                            {props.status == 1 ? "Add Contact" : "Edit"}
+                            {props.status == 1 ? "Add Location" : "Edit"}
                         </Button>
                     </Form.Item>
                 </Form>
@@ -349,8 +284,9 @@ function CustomModalContacts(props) {
         </>
     );
 
-       
+
+
 }
 
 
-export default CustomModalContacts;
+export default CustomModalLocations;

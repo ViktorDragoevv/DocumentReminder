@@ -48,7 +48,8 @@ function Contacts() {
             lastName: contacts.lastName,
             email: contacts.email,
             phoneNumber: contacts.phoneNumber,
-            locationID: contacts.locationID,
+            locationID: contacts?.viewLocation?.name,
+            location: contacts?.viewLocation,
             
         }))
         return mappedArray;
@@ -226,6 +227,14 @@ function Contacts() {
             sorter: (a, b) => a.phoneNumber.length - b.phoneNumber.length,
             sortDirections: ['descend', 'ascend'],
         },
+        {
+            title: 'locationID',
+            dataIndex: 'locationID',
+            key: 'locationID',
+            ...getColumnSearchProps('locationID'),
+            sorter: (a, b) => a.locationID.length - b.locationID.length,
+            sortDirections: ['descend', 'ascend'],
+        },
     ];
 
     const onSelectChange = (newSelectedRowKeys) => {
@@ -248,9 +257,10 @@ function Contacts() {
         return array.find((element) => {
             return element.id == ID;
         })
+        
     }
 
-
+    console.log(selectedContactObject);
 
     return (
 

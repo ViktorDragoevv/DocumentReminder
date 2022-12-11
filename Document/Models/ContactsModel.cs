@@ -1,6 +1,7 @@
 ﻿using Document.Repositories;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace Document.Models
 {
@@ -15,6 +16,16 @@ namespace Document.Models
         public string PhoneNumber { get; set; }
         public Guid? LocationID { get; set; }
 
-        public virtual LocationModel LocationModel  { get; set;}
+        public virtual LocationModel? LocationModel  { get; set;}
+
+        public void Copy(CreateUpdateContact createUpdateContact)
+        {
+            FirstName = createUpdateContact.FirstName;
+            LastName = createUpdateContact.LastName;
+            Email = createUpdateContact.Email;
+            PhoneNumber = createUpdateContact.PhoneNumber;
+            LocationID = createUpdateContact.LocationID;
+        }
+
     }
 }

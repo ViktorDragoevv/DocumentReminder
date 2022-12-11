@@ -1,5 +1,6 @@
 ﻿using Document.Models;
 using Document.Repositories;
+using System.Text.RegularExpressions;
 
 namespace Document.Services
 {
@@ -17,14 +18,27 @@ namespace Document.Services
             return await _contactRepository.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<ContactsModel>> GetAllContacts()
+        public async Task<IEnumerable<ViewContact>> GetAllContacts()
         {
-            return await _contactRepository.GetAllAsync();
+            var contactsModels =  await _contactRepository.GetAllContactsWithLocation();
+            //contactsModels.ToList().ForEach(x => x.ToModel());
+            //var contactsList = contactsModels.ToList();
+            var contactsList = contactsModels.Select(x => x.ToModel());
+            return contactsList;
         }
 
-        public async Task<ContactsModel> UpdateContactByID(ContactsModel contact)
+        public async Task<ContactsModel> UpdateContactByID(CreateUpdateContact contact, Guid id)
         {
-            return await _contactRepository.UpdateAsync(contact);
+            var existingContact = await _contactRepository.GetByIdAsync(id);
+            if (existingContact == null) { throw new ArgumentNullException("Contact not exsisting", nameof(CreateUpdateContact)); }
+            existingContact.Copy(contact);
+            return await _contactRepository.UpdateAsync(existingContact);
+        }
+
+        public async Task<ContactsModel> CreateContact(CreateUpdateContact contact)
+        {
+            var contactEntity = contact.ToEntity(Guid.NewGuid());
+            return await _contactRepository.AddAsync(contactEntity);
         }
     }
 }

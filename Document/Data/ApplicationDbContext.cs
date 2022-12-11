@@ -26,6 +26,8 @@ namespace Document.Data
 
             builder.ApplyConfiguration(new ContactConfiguration());
         }
+
+        public DbSet<Document.Models.LocationModel> LocationModel { get; set; } = default!;
     }
 
 

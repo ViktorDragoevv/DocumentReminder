@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
-import { Input } from 'antd';
+import { Input, Form } from 'antd';
 
 function CustomModal(props) { 
     
@@ -49,8 +49,9 @@ function CustomModal(props) {
     const addcategory = async (input) => {
 
         var jsonData = {
-            "CategoryName": input
+            "CategoryName": input.category
         }
+        console.log(input.lastName);
 
         var response = await fetch('https://localhost:7174/api/CategoryModels', {  // Enter your IP address here
 
@@ -70,7 +71,7 @@ function CustomModal(props) {
         console.log(object.id);
         var jsonDataa = {
             "id": parseInt(object.id),
-            "categoryName": input.toString()
+            "categoryName": input.category.toString()
         }
 
         fetch('https://localhost:7174/api/CategoryModels/' + object.id, {  // Enter your IP address here
@@ -95,23 +96,81 @@ function CustomModal(props) {
         //console.log(e.target.value);
     }
 
+
+    const [form] = Form.useForm();
+    React.useEffect(() => {
+        form.setFieldsValue({
+            category: object?.categoryName,
+        });
+    }, [object]);
+
+
+    const submit = (values) => {
+
+        if (props.status == 1) {
+            addcategory(values);
+            setOpen(false);
+        }
+        else if (props.status == 2) {
+            console.log(object);
+            editCategory(values);
+            setOpen(false);
+        }
+    };
+
     return (
         <>
             <Button type="primary" onClick={showModal}>
                 {props.status == 1 ? "Add Category" : "Edit"}
             </Button>
-            <Modal
-                title={props.status == 1 ? "Add Category" : "Edit"}
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
+           
+                <Modal
+                    title={props.status == 1 ? "Add Contact" : "Edit"}
+                    open={open}
+                    onOk={handleOk}
+                    confirmLoading={confirmLoading}
+                    onCancel={handleCancel}
+                    footer={null}
+                    forceRender
 
             >
+                <Form
+                    autoComplete="off"
+                    labelCol={{ span: 10 }}
+                    wrapperCol={{ span: 14 }}
+                    onFinish={(values) => {
+                        console.log({ values });
+                        submit(values)
+                    }}
+                    onFinishFailed={(error) => {
+                        console.log({ error });
+                    }}
+                    form={form}
 
-                <Input type="text" value={object?.categoryName} onChange={handleChange}></Input>
+                >
+                    <Form.Item
+                        name="category"
+                        label="Category"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter your name",
+                            },
+                            { whitespace: true },
+                            { min: 3 },
+                        ]}
+                        hasFeedback
+                    >
+                        <Input placeholder="Type your name" value={object?.categoryName} />
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ span: 24 }}>
+                    <Button block type="primary" htmlType="submit">
+                            {props.status == 1 ? "Add Category" : "Edit"}
+                    </Button>
+                    </Form.Item>
+                    </Form>
 
-            </Modal>
+                </Modal>
         </>
     );
 }

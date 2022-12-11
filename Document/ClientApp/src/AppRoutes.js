@@ -5,6 +5,7 @@ import { Counter } from "./components/Counter";
 import CustomCalendar from './components/CustomCalendar';
 import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
+import Location from './components/Locations';
 
 const AppRoutes = [
   {
@@ -29,7 +30,12 @@ const AppRoutes = [
         path: '/contacts',
         requireAuth: true,
         element: <Contacts />
-  },
+    },
+    {
+        path: '/locations',
+        requireAuth: true,
+        element: <Location />
+    },
   ...ApiAuthorzationRoutes
 ];
 

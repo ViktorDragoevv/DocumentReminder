@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Document.Repositories;
+using System.ComponentModel.DataAnnotations;
 
 namespace Document.Models
 {
-    public class LocationModel
+    public class LocationModel : IEntity
     {
         [Key]
         public Guid ID { get; set; }
