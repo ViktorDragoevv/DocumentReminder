@@ -44,6 +44,7 @@ function CustomModalContacts(props) {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalText, setModalText] = useState('Content of the modal');
     const { Option } = Select;
+    //let [locationOptions, setLocationOptions] = useState();
     //const [contactObjectFromParent, setContactObjectFromParent] = useState();
 
 
@@ -106,7 +107,7 @@ function CustomModalContacts(props) {
     const editCategory = async (input) => {
 
         console.log(input.id);
-        var jsonDataa = { ...input, id: contactObject.id };
+        var jsonDataa = { ...input, id: contactObject.id, locationID: contactObject.locationID };
         console.log("vliza:");
         //'console.log(JSON.stringify(...input,contactObject.id));
         console.log(jsonDataa);
@@ -176,7 +177,9 @@ function CustomModalContacts(props) {
             lastName: contactObject?.lastName,
             email: contactObject?.email,
             phoneNumber: contactObject?.phoneNumber,
+            locationID: contactObject?.locationID,
         });
+        //setLocationOptions(contactObject?.locationID);
     }, [contactObject]);
 
     return (
@@ -275,6 +278,16 @@ function CustomModalContacts(props) {
                         hasFeedback
                     >
                         <Input placeholder="Type your phone number" type="number" />
+                    </Form.Item>
+
+                    <Form.Item name="location" label="Location" requiredMark="optional">
+                        <Select placeholder="Select your location">
+
+                            <Option value={contactObject?.locationID}>
+                                {contactObject?.locationID}
+                                    </Option>
+                                    
+                        </Select>
                     </Form.Item>
                     
 

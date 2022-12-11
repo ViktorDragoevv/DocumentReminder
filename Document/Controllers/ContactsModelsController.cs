@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Document.Data;
 using Document.Models;
 using Microsoft.AspNetCore.Authorization;
+using Document.Services;
 
 namespace Document.Controllers
 {
@@ -16,39 +17,58 @@ namespace Document.Controllers
     public class ContactsModelsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IContactService _contactService;
 
-        public ContactsModelsController(ApplicationDbContext context)
+        public ContactsModelsController(ApplicationDbContext context, IContactService contactService)
         {
             _context = context;
+            _contactService = contactService;
         }
 
         // GET: api/ContactsModels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContactsModel>>> GetContactsModel()
         {
-          if (_context.ContactsModel == null)
-          {
-              return NotFound();
-          }
-            return await _context.ContactsModel.ToListAsync();
+            /*if (_context.ContactsModel == null)
+            {
+                return NotFound();
+            }
+              return await _context.ContactsModel.ToListAsync();*/
+
+            var contacts = await _contactService.GetAllContacts();
+            if (contacts == null)
+            {
+                return NotFound();
+            }
+            return (contacts.ToList());
+
         }
 
         // GET: api/ContactsModels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ContactsModel>> GetContactsModel(Guid id)
         {
-          if (_context.ContactsModel == null)
-          {
-              return NotFound();
-          }
-            var contactsModel = await _context.ContactsModel.FindAsync(id);
-
-            if (contactsModel == null)
+            /*if (_context.ContactsModel == null)
             {
                 return NotFound();
             }
+              var contactsModel = await _context.ContactsModel.FindAsync(id);
 
-            return contactsModel;
+              if (contactsModel == null)
+              {
+                  return NotFound();
+              }
+
+              return contactsModel;*/
+
+            var contact = await _contactService.GetContactByID(id);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+            return (contact);
+
+
         }
 
         // PUT: api/ContactsModels/5
@@ -78,6 +98,8 @@ namespace Document.Controllers
                     throw;
                 }
             }
+
+            
 
             return NoContent();
         }

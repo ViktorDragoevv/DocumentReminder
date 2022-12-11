@@ -32,7 +32,7 @@ function Contacts() {
             let data = await response.json();
             setData(AddKeyProp(data));
             
-            console.log(dataContacts);
+            console.log(data);
         };
 
         fetchData();
@@ -48,6 +48,7 @@ function Contacts() {
             lastName: contacts.lastName,
             email: contacts.email,
             phoneNumber: contacts.phoneNumber,
+            locationID: contacts.locationID,
             
         }))
         return mappedArray;
@@ -234,7 +235,7 @@ function Contacts() {
 
         let selectedContactObject = findArrayElementById(dataContacts, newSelectedRowKeys);
         setSelectedContactObject(selectedContactObject);
-        //console.log(object);
+        console.log(dataContacts);
     };
 
     const rowSelection = {

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Document.Controllers;
+using Document.Repositories;
+using Document.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var policyName = "_myAllowSpecificOrigins"; // cors
@@ -50,7 +52,8 @@ builder.Services.AddControllers();
 
 
 
-
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactService, ContactService>();
 
 
 

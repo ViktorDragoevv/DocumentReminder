@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Document.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel.DataAnnotations;
 
 namespace Document.Models
 {
-    public class ContactsModel
+    public class ContactsModel : IEntity
     {
         [Key]
         [Required]
