@@ -9,11 +9,14 @@ using Document.Data;
 using Document.Models;
 using Document.Repositories;
 using Document.Services;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Document.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LocationModelsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

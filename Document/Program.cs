@@ -1,4 +1,4 @@
-﻿using Document.Data;
+using Document.Data;
 using Document.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Document.Controllers;
 using Document.Repositories;
 using Document.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Document.Infrastructure;
+using Document.AuthServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var policyName = "_myAllowSpecificOrigins"; // cors
@@ -22,8 +27,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+//builder.Services.AddAuthentication().AddIdentityServerJwt();
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -58,6 +63,8 @@ builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 
 
@@ -77,6 +84,76 @@ builder.Services.AddCors(options =>
                       });
 });
 builder.Services.AddControllers(); // cors
+
+
+//JWT
+
+
+/*
+var applicationSettingsConfiguration = builder.Configuration.GetSection("Jwt");
+var appSettings = applicationSettingsConfiguration.Get<AppSettings>();
+var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddControllers();
+builder.Services
+              .AddAuthentication(x =>
+              {
+                  x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                  x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+              })
+              .AddCookie(config =>
+              {
+                  config.Cookie.Name = "Jwt";
+              })
+              .AddJwtBearer(x =>
+              {
+                  x.Events = new JwtBearerEvents()
+                  {
+                      //get cookie value
+                      OnMessageReceived = context =>
+                      {
+                          var a = "";
+                          context.Request.Cookies.TryGetValue("Jwt", out a);
+                          context.Token = a;
+                          return Task.CompletedTask;
+                      }
+                  };
+                  x.RequireHttpsMetadata = false;
+                  x.SaveToken = true;
+                  x.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuerSigningKey = true,
+                      IssuerSigningKey = new SymmetricSecurityKey(key),
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+
+                  };
+              });*/
+
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddCookie(config =>
+{
+    config.Cookie.Name = "Authorization";
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = "http://localhost:16667",
+        ValidIssuer = "http://localhost:16667",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisismySecretKey"))
+    };
+});
+
+
 
 
 var app = builder.Build();

@@ -3,7 +3,7 @@ import authService from "./api-authorization/AuthorizeService";
 import CustomModal from "./CustomModal";
 import CustomTable from "./CustomTable";
 import { FileAddOutlined } from '@ant-design/icons';
-
+import { useCookies } from "react-cookie";
 import { Button } from 'antd';
 
 
@@ -18,8 +18,7 @@ function Category() {
     const getGitHubUserWithFetch = async () => { };
 
     const [category, setCategory] = useState();
-
-
+    const [cookies, setCookie] = useCookies();
     const [object, setObject] = useState();
 
     useEffect(() => {
@@ -27,7 +26,7 @@ function Category() {
         async function fetchData() {
             const token = await authService.getAccessToken();
             const response = await fetch('https://localhost:7174/api/CategoryModels', {
-                headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+                headers: !cookies.Authorization ? {} : { 'Authorization': `${cookies.Authorization}` },
                 //headers: { 'Access-Control-Allow-Origin': '*' },
                 //headers: { 'content-type': 'application/json; charset=utf-8' }
             });
@@ -75,10 +74,12 @@ function Category() {
         }
 
         fetch('https://localhost:7174/api/CategoryModels/' + selected.id, {  // Enter your IP address here
-
             method: 'DELETE',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             //body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         })

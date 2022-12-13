@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'antd';
+import { useCookies } from "react-cookie";
 import {
     Cascader,
     DatePicker,
@@ -20,6 +21,7 @@ function CustomModalLocations(props) {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalText, setModalText] = useState('Content of the modal');
     const { Option } = Select;
+    const [cookies, setCookie] = useCookies();
 
 
 
@@ -69,10 +71,12 @@ function CustomModalLocations(props) {
         console.log("funk:" + input);
 
         var response = await fetch('https://localhost:7174/api/ContactsModels', {  // Enter your IP address here
-
             method: 'POST',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         });
@@ -89,10 +93,12 @@ function CustomModalLocations(props) {
         //'console.log(JSON.stringify(...input,contactObject.id));
         console.log(jsonDataa);
         fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {  // Enter your IP address here
-
             method: 'PUT',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonDataa) // body data type must match "Content-Type" header
 
         });

@@ -10,6 +10,7 @@ import CustomModal from "./CustomModal";
 import CustomTable from "./CustomTable";
 import CustomModalContacts from "./CustomModalContacts";
 import CustomModalLocations from "./CustomModalLocations";
+import { useCookies } from "react-cookie";
 
 function Locations() {
 
@@ -21,22 +22,22 @@ function Locations() {
     const [searchedColumn, setSearchedColumn] = useState('');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [selectedLocationObject, setSelectedLocationObject] = useState();
+    const [cookies, setCookie] = useCookies();
 
 
     useEffect(() => {
-
+        console.log(cookies.Authorization);
         async function fetchData() {
-
-            const token = await authService.getAccessToken();
+            
+            //const token = await authService.getAccessToken();
             const response = await fetch('https://localhost:7174/api/LocationModels', {
-                headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+                headers: !cookies.Authorization ? {} : { 'Authorization': `${cookies.Authorization}` },
                 //headers: { 'Access-Control-Allow-Origin': '*' },
                 //headers: { 'content-type': 'application/json; charset=utf-8' }
             });
             let data = await response.json();
             setDataLocations(AddKeyProp(data));
 
-            console.log(data);
         };
 
         fetchData();

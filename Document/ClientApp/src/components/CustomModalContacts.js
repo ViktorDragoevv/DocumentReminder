@@ -2,6 +2,7 @@
 import { Button, Modal } from 'antd';
 import { SmileOutlined } from '@ant-design/icons';
 import * as yup from "yup";
+import { useCookies } from "react-cookie";
 import {
     Cascader,
     DatePicker,
@@ -40,6 +41,7 @@ function CustomModalContacts(props) {
     const [contactObject, setContactObject] = useState();
     const [locations, setLocations] = useState();
     const [defValueSelect, setDefValueSelect] = useState();
+    const [cookies, setCookie] = useCookies();
     console.log(contactObject);
 
     const [open, setOpen] = useState(false);
@@ -84,20 +86,17 @@ function CustomModalContacts(props) {
 
     const addcategory = async (input) => {
 
-        var jsonData = {
-            "firstName": input.firstName,
-            "lastName": input.lastName,
-            "email": input.email,
-            "phoneNumber": input.phoneNumber
-        }
+        var jsonData = { ...input, locationID: input.location };
 
         console.log("funk:" + input);
 
         var response = await fetch('https://localhost:7174/api/ContactsModels', {  // Enter your IP address here
-
             method: 'POST',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         });
@@ -114,14 +113,17 @@ function CustomModalContacts(props) {
         //'console.log(JSON.stringify(...input,contactObject.id));
         console.log(jsonDataa);
         fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {  // Enter your IP address here
-
             method: 'PUT',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonDataa) // body data type must match "Content-Type" header
 
         });
-        props.update(jsonDataa);
+        console.log({ ...input, id: contactObject.id, viewLocation: input.location });
+        props.update({ ...input, id: contactObject.id, viewLocation: input.location });
 
     }
 
@@ -172,6 +174,7 @@ function CustomModalContacts(props) {
         else if (props.status == 2) {
             console.log(contactObject);
             editCategory(values);
+            console.log(values);
         }
     };
 
@@ -208,8 +211,14 @@ function CustomModalContacts(props) {
         async function fetchData() {
 
             
-            const response = await fetch('https://localhost:7174/api/LocationModels', {
-            });
+            const response = await fetch('https://localhost:7174/api/LocationModels',
+                {
+
+                    headers: new Headers({
+                        'Content-Type': 'application/json',
+                        'Authorization': `${cookies.Authorization}`
+                    }),
+                });
             let data = await response.json();
             const optionsforSelect = data.map((location, index) => ({
 

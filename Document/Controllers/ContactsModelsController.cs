@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Document.Data;
 using Document.Models;
-using Microsoft.AspNetCore.Authorization;
 using Document.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Document.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ContactsModelsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -34,7 +35,7 @@ namespace Document.Controllers
                 return NotFound();
             }
               return await _context.ContactsModel.ToListAsync();*/
-
+            
             var contacts = await _contactService.GetAllContacts();
             if (contacts == null)
             {

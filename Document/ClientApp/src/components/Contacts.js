@@ -9,6 +9,7 @@ import authService from "./api-authorization/AuthorizeService";
 import CustomModal from "./CustomModal";
 import CustomTable from "./CustomTable";
 import CustomModalContacts from "./CustomModalContacts";
+import { useCookies } from "react-cookie";
 
 function Contacts() {
 
@@ -18,14 +19,16 @@ function Contacts() {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const searchInput = useRef(null);
     const [selectedContactObject, setSelectedContactObject] = useState();
+    const [cookies, setCookie] = useCookies();
 
     useEffect(() => {
 
         async function fetchData() {
 
-            const token = await authService.getAccessToken();
+            //const token = await authService.getAccessToken();
             const response = await fetch('https://localhost:7174/api/ContactsModels', {
-                headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+                headers: !cookies.Authorization ? {} : { 'Authorization': `${cookies.Authorization}` },
+                //headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
                 //headers: { 'Access-Control-Allow-Origin': '*' },
                 //headers: { 'content-type': 'application/json; charset=utf-8' }
             });
@@ -58,7 +61,7 @@ function Contacts() {
     const deleteContacts = () => {
 
 
-        console.log(selectedRowKeys);
+        console.log(selectedContactObject.id);
 
 
 
@@ -69,10 +72,15 @@ function Contacts() {
         fetch('https://localhost:7174/api/ContactsModels/' + selectedContactObject.id, {  // Enter your IP address here
             method: 'DELETE',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             //body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         })
+
+        setData(dataContacts.filter((item) => item.id !== selectedContactObject.id));
     };
 
     const addContactFromChild = newContact => {

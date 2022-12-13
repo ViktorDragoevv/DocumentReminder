@@ -13,7 +13,7 @@ namespace Document.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     
     public class CategoryModelsController : ControllerBase
     {

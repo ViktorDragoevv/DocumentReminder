@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
 import { Input, Form } from 'antd';
-
+import { useCookies } from "react-cookie";
 function CustomModal(props) { 
     
 
@@ -12,7 +12,7 @@ function CustomModal(props) {
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalText, setModalText] = useState('Content of the modal');
-
+    const [cookies, setCookie] = useCookies();
 
     const showModal = () => {
         setOpen(true);
@@ -54,10 +54,12 @@ function CustomModal(props) {
         console.log(input.lastName);
 
         var response = await fetch('https://localhost:7174/api/CategoryModels', {  // Enter your IP address here
-
             method: 'POST',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         });
@@ -75,10 +77,12 @@ function CustomModal(props) {
         }
 
         fetch('https://localhost:7174/api/CategoryModels/' + object.id, {  // Enter your IP address here
-
             method: 'PUT',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
             body: JSON.stringify(jsonDataa) // body data type must match "Content-Type" header
 
         });
