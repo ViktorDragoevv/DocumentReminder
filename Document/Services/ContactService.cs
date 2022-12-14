@@ -40,5 +40,11 @@ namespace Document.Services
             var contactEntity = contact.ToEntity(Guid.NewGuid());
             return await _contactRepository.AddAsync(contactEntity);
         }
+
+        public Task<ContactsModel> DeleteContact(Guid id)
+        {
+            var deleteContact = _contactRepository.RemoveAsync(id);
+            return deleteContact;
+        }
     }
 }

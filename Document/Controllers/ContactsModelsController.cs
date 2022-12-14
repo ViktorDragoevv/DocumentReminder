@@ -133,7 +133,7 @@ namespace Document.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContactsModel(Guid id)
         {
-            if (_context.ContactsModel == null)
+            /*if (_context.ContactsModel == null)
             {
                 return NotFound();
             }
@@ -144,8 +144,12 @@ namespace Document.Controllers
             }
 
             _context.ContactsModel.Remove(contactsModel);
-            await _context.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();*/
+            var deleteContact = await _contactService.DeleteContact(id);
+            if (deleteContact == null)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 

@@ -1,5 +1,6 @@
 ﻿using Document.Repositories;
 using System.ComponentModel.DataAnnotations;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace Document.Models
 {
@@ -17,6 +18,13 @@ namespace Document.Models
         public LocationModel()
         {
             Contacts = new HashSet<ContactsModel>();
+        }
+        public void Copy(ViewLocation locationView)
+        {
+            Name = locationView.Name;
+            Code = locationView.Code;
+            Address = locationView.Address;
+            City = locationView.City;
         }
 
     }

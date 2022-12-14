@@ -39,7 +39,7 @@ namespace Document.AuthServices
                         }),
                 Issuer = validIssuer,
                 Audience = validAudience,
-                Expires = DateTime.Now.AddMinutes(10),
+                Expires = DateTime.Now.AddMinutes(1000),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

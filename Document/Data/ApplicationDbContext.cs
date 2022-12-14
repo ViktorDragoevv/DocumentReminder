@@ -25,6 +25,7 @@ namespace Document.Data
             //builder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
 
             builder.ApplyConfiguration(new ContactConfiguration());
+            builder.ApplyConfiguration(new LocationConfiguration());
         }
 
         public DbSet<Document.Models.LocationModel> LocationModel { get; set; } = default!;

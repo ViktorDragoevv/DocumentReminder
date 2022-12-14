@@ -34,7 +34,7 @@ const yupSync = {
 };
 
 
-
+ 
 
 function CustomModalContacts(props) {
 
@@ -88,8 +88,6 @@ function CustomModalContacts(props) {
 
         var jsonData = { ...input, locationID: input.location };
 
-        console.log("funk:" + input);
-
         var response = await fetch('https://localhost:7174/api/ContactsModels', {  // Enter your IP address here
             method: 'POST',
             mode: 'cors',
@@ -100,18 +98,15 @@ function CustomModalContacts(props) {
             body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         });
+        var newContactLocation = locations.filter(x => x.value == input.location);
         var newCategory = await response.json();
-        //console.log(newCategory);
-        props.update(newCategory);
+        props.update({ ...newCategory, viewLocation: { id: newContactLocation[0].value, name: newContactLocation[0].label }});
 
     }
     const editCategory = async (input) => {
 
-        console.log(input.id);
+
         var jsonDataa = { ...input, id: contactObject.id, locationID: input.location };
-        console.log("vliza:");
-        //'console.log(JSON.stringify(...input,contactObject.id));
-        console.log(jsonDataa);
         fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {  // Enter your IP address here
             method: 'PUT',
             mode: 'cors',
@@ -121,9 +116,12 @@ function CustomModalContacts(props) {
             }),
             body: JSON.stringify(jsonDataa) // body data type must match "Content-Type" header
 
-        });
-        console.log({ ...input, id: contactObject.id, viewLocation: input.location });
-        props.update({ ...input, id: contactObject.id, viewLocation: input.location });
+        }).then((response) => response.json())
+            .then((data) => console.log(data));;
+
+
+        var updatedContactLocation = locations.filter(x => x.value == input.location);
+        props.update({ ...input, id: contactObject.id, viewLocation: { id: updatedContactLocation[0].value, name: updatedContactLocation[0].label } });
 
     }
 
@@ -180,8 +178,6 @@ function CustomModalContacts(props) {
 
     var handleSubmit = (event) => {
         event.preventDefault();
-        console.log(event.target); // from elements property
-        //console.log(event.target.username.value)          // or directly
         console.log(props.status);
         if (props.status == 1) {
             addcategory(contactObject.categoryName);
@@ -227,7 +223,6 @@ function CustomModalContacts(props) {
 
             }))
             setLocations(optionsforSelect);
-            console.log(optionsforSelect);
             
         };
 

@@ -53,6 +53,7 @@ function Contacts() {
             phoneNumber: contacts.phoneNumber,
             locationID: contacts?.viewLocation?.name,
             location: contacts?.viewLocation,
+            viewLocation: contacts?.viewLocation,
             
         }))
         return mappedArray;
@@ -69,14 +70,13 @@ function Contacts() {
             "ID": selectedContactObject.id
         }
         
-        fetch('https://localhost:7174/api/ContactsModels/' + selectedContactObject.id, {  // Enter your IP address here
+        fetch('https://localhost:7174/api/ContactsModels/' + selectedContactObject.id, {
             method: 'DELETE',
             mode: 'cors',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': `${cookies.Authorization}`
             }),
-            //body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
 
         })
 
@@ -91,10 +91,7 @@ function Contacts() {
     const updateCategoryFromChild = newContact => {
         //let updatedItem = dataContacts.find((element) => { return element.id === newCategory.ID });
         let changedContact = dataContacts.map(a => a.id == newContact.id ? newContact : a);
-        console.log(newContact);
         setData(AddKeyProp(changedContact));
-        console.log(newContact);
-        console.log(changedContact);
 
     }
 
@@ -246,13 +243,10 @@ function Contacts() {
     ];
 
     const onSelectChange = (newSelectedRowKeys) => {
-        console.log('selectedRowKeys changed: ', newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
-        //console.log(newSelectedRowKeys);
 
         let selectedContactObject = findArrayElementById(dataContacts, newSelectedRowKeys);
         setSelectedContactObject(selectedContactObject);
-        console.log(dataContacts);
     };
 
     const rowSelection = {
@@ -267,8 +261,6 @@ function Contacts() {
         })
         
     }
-
-    console.log(selectedContactObject);
 
     return (
 

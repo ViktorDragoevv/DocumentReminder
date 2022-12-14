@@ -16,7 +16,7 @@ import {
 
 function CustomModalLocations(props) {
 
-    const [contactObject, setContactObject] = useState();
+    const [locationObject, setLocationObject] = useState();
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalText, setModalText] = useState('Content of the modal');
@@ -29,21 +29,20 @@ function CustomModalLocations(props) {
 
     const showModal = () => {
         setOpen(true);
-        setContactObject(props.selectedRowKeys);
+        setLocationObject(props.selectedRowKeys);
         console.log(props.selectedRowKeys);
     };
 
     const handleOk = () => {
         setModalText('The modal will be closed after two seconds');
         setConfirmLoading(true);
-        //refreshPage();
 
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addLocation(locationObject.categoryName);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            console.log(locationObject);
+            editLocation(locationObject.categoryName);
         }
 
 
@@ -59,40 +58,36 @@ function CustomModalLocations(props) {
     };
 
 
-    const addcategory = async (input) => {
+    const addLocation = async (input) => {
 
-        var jsonData = {
-            "firstName": input.firstName,
-            "lastName": input.firstName,
-            "email": input.email,
-            "phoneNumber": input.phoneNumber
-        }
+
+        console.log(input);
 
         console.log("funk:" + input);
-
-        var response = await fetch('https://localhost:7174/api/ContactsModels', {  // Enter your IP address here
+        console.log(JSON.stringify(input));
+        var response = await fetch('https://localhost:7174/api/LocationModels', {  // Enter your IP address here
             method: 'POST',
             mode: 'cors',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': `${cookies.Authorization}`
             }),
-            body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
+            body: JSON.stringify(input) // body data type must match "Content-Type" header
 
         });
         var newCategory = await response.json();
-        //console.log(newCategory);
+        
         props.update(newCategory);
 
     }
-    const editCategory = async (input) => {
+    const editLocation = async (input) => {
 
         console.log(input.id);
-        var jsonDataa = { ...input, id: contactObject.id, locationID: contactObject.locationID };
+        var jsonDataa = { ...input, id: locationObject.id};
         console.log("vliza:");
         //'console.log(JSON.stringify(...input,contactObject.id));
         console.log(jsonDataa);
-        fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {  // Enter your IP address here
+        fetch('https://localhost:7174/api/LocationModels/' + locationObject.id, {  // Enter your IP address here
             method: 'PUT',
             mode: 'cors',
             headers: new Headers({
@@ -108,7 +103,7 @@ function CustomModalLocations(props) {
 
     const handleChange = e => {
         //setInput(e.target.value);
-        setContactObject({ ...contactObject, firstName: e.target.value, });
+        setLocationObject({ ...locationObject, firstName: e.target.value, });
         //console.log(e.target.value);
     }
 
@@ -129,11 +124,11 @@ function CustomModalLocations(props) {
 
         setOpen(false);
         if (props.status == 1) {
-            addcategory(values);
+            addLocation(values);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(values);
+            console.log(locationObject);
+            editLocation(values);
         }
     };
 
@@ -143,11 +138,11 @@ function CustomModalLocations(props) {
         //console.log(event.target.username.value)          // or directly
         console.log(props.status);
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addLocation(locationObject.categoryName);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            console.log(locationObject);
+            editLocation(locationObject.categoryName);
         }
     }
 
@@ -155,24 +150,23 @@ function CustomModalLocations(props) {
     const [form] = Form.useForm();
     React.useEffect(() => {
         form.setFieldsValue({
-            firstName: contactObject?.firstName,
-            lastName: contactObject?.lastName,
-            email: contactObject?.email,
-            phoneNumber: contactObject?.phoneNumber,
-            locationID: contactObject?.locationID,
+            name: locationObject?.name,
+            address: locationObject?.address,
+            code: locationObject?.code,
+            city: locationObject?.city,
         });
         //setLocationOptions(contactObject?.locationID);
-    }, [contactObject]);
+    }, [locationObject]);
 
 
     return (
         <>
             <Button type="primary" onClick={showModal}>
-                {props.status == 1 ? "Add Contact" : "Edit"}
+                {props.status == 1 ? "Add Location" : "Edit"}
             </Button>
 
             <Modal
-                title={props.status == 1 ? "Add Contact" : "Edit"}
+                title={props.status == 1 ? "Add Location" : "Edit"}
                 open={open}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
@@ -188,7 +182,7 @@ function CustomModalLocations(props) {
 
                 <Form
                     autoComplete="off"
-                    labelCol={{ span: 10 }}
+                    labelCol={{ span: 8 }}
                     wrapperCol={{ span: 14 }}
                     onFinish={(values) => {
                         console.log({ values });
@@ -201,8 +195,8 @@ function CustomModalLocations(props) {
 
                 >
                     <Form.Item
-                        name="firstName"
-                        label="First Name"
+                        name="name"
+                        label="Name"
                         rules={[
                             {
                                 required: true,
@@ -213,66 +207,56 @@ function CustomModalLocations(props) {
                         ]}
                         hasFeedback
                     >
-                        <Input type="text" placeholder="Type your name" value={contactObject?.firstName}></Input>
+                        <Input type="text" placeholder="Type name" value={locationObject?.firstName}></Input>
                     </Form.Item>
 
                     <Form.Item
-                        name="lastName"
-                        label="Last Name"
+                        name="code"
+                        label="Code"
                         rules={[
                             {
                                 required: true,
-                                message: "Please enter your name",
+                                message: "Please enter your code",
+                            },
+                            { whitespace: true },
+                            { min: 4 },
+                        ]}
+                        hasFeedback
+                    >
+                        <Input placeholder="Type your code" type="number" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="address"
+                        label="Address"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter your address",
                             },
                             { whitespace: true },
                             { min: 3 },
                         ]}
                         hasFeedback
                     >
-                        <Input placeholder="Type your name" value={contactObject?.firstName} />
+                        <Input type="text" placeholder="Type your address" value={locationObject?.firstName}></Input>
                     </Form.Item>
 
                     <Form.Item
-                        name="email"
-                        label="Email"
+                        name="city"
+                        label="City"
                         rules={[
                             {
                                 required: true,
-                                message: "Please enter your email",
-                            },
-                            { type: "email", message: "Please enter a valid email" },
-                        ]}
-                        hasFeedback
-                    >
-                        <Input placeholder="Type your email" />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="phoneNumber"
-                        label="Phone number"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter your phone number",
+                                message: "Please enter your city",
                             },
                             { whitespace: true },
-                            { min: 10 },
+                            { min: 3 },
                         ]}
                         hasFeedback
                     >
-                        <Input placeholder="Type your phone number" type="number" />
+                        <Input type="text" placeholder="Type your city" value={locationObject?.firstName}></Input>
                     </Form.Item>
-
-                    <Form.Item name="location" label="Location" requiredMark="optional">
-                        <Select placeholder="Select your location">
-
-                            <Option value={contactObject?.locationID}>
-                                {contactObject?.locationID}
-                            </Option>
-
-                        </Select>
-                    </Form.Item>
-
 
 
 

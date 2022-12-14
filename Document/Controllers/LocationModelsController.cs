@@ -67,9 +67,9 @@ namespace Document.Controllers
         // PUT: api/LocationModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLocationModel(Guid id, LocationModel locationModel)
+        public async Task<ActionResult<LocationModel>> PutLocationModel(Guid id, ViewLocation locationModel)
         {
-            if (id != locationModel.ID)
+            /*if (id != locationModel.ID)
             {
                 return BadRequest();
             }
@@ -90,31 +90,39 @@ namespace Document.Controllers
                 {
                     throw;
                 }
-            }
-
-            return NoContent();
+            }*/
+            return await _locationService.UpdateLocation(locationModel, id);
+            //return NoContent();
         }
 
         // POST: api/LocationModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LocationModel>> PostLocationModel(LocationModel locationModel)
+        public async Task<ActionResult<LocationModel>> PostLocationModel(ViewLocation locationModel)
         {
-          if (_context.LocationModel == null)
+          /*if (_context.LocationModel == null)
           {
               return Problem("Entity set 'ApplicationDbContext.LocationModel'  is null.");
           }
             _context.LocationModel.Add(locationModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLocationModel", new { id = locationModel.ID }, locationModel);
+            return CreatedAtAction("GetLocationModel", new { id = locationModel.ID }, locationModel);*/
+
+
+            var lacation = await _locationService.CreateLocation(locationModel);
+            if (lacation == null)
+            {
+                return NotFound();
+            }
+            return (lacation);
         }
 
         // DELETE: api/LocationModels/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocationModel(Guid id)
         {
-            if (_context.LocationModel == null)
+            /*if (_context.LocationModel == null)
             {
                 return NotFound();
             }
@@ -125,8 +133,8 @@ namespace Document.Controllers
             }
 
             _context.LocationModel.Remove(locationModel);
-            await _context.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();*/
+            var deleteLocation = await _locationService.DeleteLocation(id);
             return NoContent();
         }
 

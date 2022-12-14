@@ -29,14 +29,12 @@ function Locations() {
         console.log(cookies.Authorization);
         async function fetchData() {
             
-            //const token = await authService.getAccessToken();
             const response = await fetch('https://localhost:7174/api/LocationModels', {
                 headers: !cookies.Authorization ? {} : { 'Authorization': `${cookies.Authorization}` },
-                //headers: { 'Access-Control-Allow-Origin': '*' },
-                //headers: { 'content-type': 'application/json; charset=utf-8' }
             });
             let data = await response.json();
             setDataLocations(AddKeyProp(data));
+            console.log(data);
 
         };
 
@@ -218,18 +216,18 @@ function Locations() {
         },
     ];
 
-    const addContactFromChild = newContact => {
-        /*setData(AddKeyProp([...dataContacts, newContact]));
-        console.log(newContact);*/
+    const addContactFromChild = newLocation => {
+        setDataLocations(AddKeyProp([...dataLocations, newLocation]));
+        console.log(newLocation);
     }
 
-    const updateCategoryFromChild = newContact => {
+    const updateCategoryFromChild = newLocation => {
         //let updatedItem = dataContacts.find((element) => { return element.id === newCategory.ID });
-        /*let changedContact = dataContacts.map(a => a.id == newContact.id ? newContact : a);
-        console.log(newContact);
-        setData(AddKeyProp(changedContact));
-        console.log(newContact);
-        console.log(changedContact);*/
+        let changedContact = dataLocations.map(a => a.id == newLocation.id ? newLocation : a);
+        console.log(newLocation);
+        setDataLocations(AddKeyProp(changedContact));
+        console.log(newLocation);
+        console.log(changedContact);
 
     }
 
@@ -249,10 +247,13 @@ function Locations() {
         fetch('https://localhost:7174/api/LocationModels/' + selectedLocationObject.id, {  // Enter your IP address here
             method: 'DELETE',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            //body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
 
         })
+        setDataLocations(dataLocations.filter((item) => item.id !== selectedLocationObject.id));
     };
 
 
