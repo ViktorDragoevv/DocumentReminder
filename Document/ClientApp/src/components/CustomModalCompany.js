@@ -15,34 +15,16 @@ import {
     TreeSelect,
 } from 'antd';
 
-
-let schema = yup.object().shape({
-    name: yup.string().required(),
-    age: yup
-        .number()
-        .required()
-        .typeError('Number only.')
-        .positive()
-        .integer()
-        .round(),
-});
-
-const yupSync = {
-    async validator({ field }, value) {
-        await schema.validateSyncAt(field, { [field]: value });
-    },
-};
+function CustomModalCompany(props) {
 
 
- 
 
-function CustomModalContacts(props) {
 
-    const [contactObject, setContactObject] = useState();
+    const [companyObject, setCompanyObject] = useState();
     const [locations, setLocations] = useState();
     const [defValueSelect, setDefValueSelect] = useState();
     const [cookies, setCookie] = useCookies();
-    console.log(contactObject);
+    console.log(companyObject);
 
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -54,7 +36,7 @@ function CustomModalContacts(props) {
 
     const showModal = () => {
         setOpen(true);
-        setContactObject(props.selectedRowKeys);
+        setCompanyObject(props.selectedRowKeys);
         console.log(props.selectedRowKeys);
     };
 
@@ -64,11 +46,11 @@ function CustomModalContacts(props) {
         //refreshPage();
 
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addCompany(companyObject.categoryName);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            console.log(companyObject);
+            editCompany(companyObject.categoryName);
         }
 
 
@@ -84,16 +66,17 @@ function CustomModalContacts(props) {
     };
 
 
-    const addcategory = async (input) => {
+    const addCompany = async (input) => {
         console.log(input);
         var data = {
-            firstName : input.firstName,
-            lastName : input.lastName,
-            email : input.email,
-            phoneNumber : input.phoneNumber,
-            locationID : input.location,
-            }
-        var response = await fetch('https://localhost:7174/api/ContactsModels', {
+            name: input.name,
+            tradeName: input.tradeName,
+            type: input.type,
+            phone : input.phone,
+            locationID: input.location,
+        }
+        console.log(data);
+        var response = await fetch('https://localhost:7174/api/CompanyModels', {
             method: 'POST',
             mode: 'cors',
             headers: new Headers({
@@ -104,35 +87,36 @@ function CustomModalContacts(props) {
 
         });
         //var newContactLocation = locations.filter(x => x.value == input?.location);
-        var newContact = await response.json();
+        var newCompany = await response.json();
         //console.log({ ...newContact, viewLocation: { id: newContactLocation[0]?.value, name: newContactLocation[0]?.label } });
-        console.log(newContact);
-        props.update(newContact);
+        console.log(newCompany);
+        props.update(newCompany);
 
     }
-    const editCategory = async (input) => {
+    const editCompany = async (input) => {
         // jsonDataa;
         console.log(input);
-        var editedContact = await fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {
+        var editedCompany = await fetch('https://localhost:7174/api/CompanyModels/' + companyObject.id, {
             method: 'PUT',
             mode: 'cors',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': `${cookies.Authorization}`
             }),
-            body: JSON.stringify({ ...input, id: contactObject.id, locationID: input.location })
+            body: JSON.stringify({ ...input, id: companyObject.id, locationID: input.location })
 
         })
 
         var updatedContactLocation = locations.filter(x => x.value == input.location);
         //props.update({ ...input, id: contactObject.id, viewLocation: { id: updatedContactLocation[0]?.value, name: updatedContactLocation[0]?.label } });
-        var editedContactResponse = await editedContact.json();
+        var editedContactResponse = await editedCompany.json();
         console.log(editedContactResponse);
         props.update(editedContactResponse);
 
     }
 
-  
+
+
 
     /*const  loadLocation = async () => {
 
@@ -155,7 +139,7 @@ function CustomModalContacts(props) {
 
     const handleChange = e => {
         //setInput(e.target.value);
-        setContactObject({ ...contactObject, firstName: e.target.value, });
+        setCompanyObject({ ...companyObject, firstName: e.target.value, });
         //console.log(e.target.value);
     }
 
@@ -173,14 +157,14 @@ function CustomModalContacts(props) {
     };
 
     const submit = (values) => {
-        
+
         setOpen(false);
         if (props.status == 1) {
-            addcategory(values);
+            addCompany(values);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(values);
+            console.log(companyObject);
+            editCompany(values);
             console.log(values);
         }
     };
@@ -189,30 +173,31 @@ function CustomModalContacts(props) {
         event.preventDefault();
         console.log(props.status);
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addCompany(companyObject.categoryName);
         }
         else if (props.status == 2) {
-            console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            console.log(companyObject);
+            editCompany(companyObject.categoryName);
         }
     }
 
-    
+
+
 
     const [form] = Form.useForm();
     React.useEffect(() => {
-        
-        
+
+
         form.setFieldsValue({
-            firstName: contactObject?.firstName,
-            lastName: contactObject?.lastName,
-            email: contactObject?.email,
-            phoneNumber: contactObject?.phoneNumber,
-            location: contactObject?.location?.id,
+            name: companyObject?.name,
+            tradeName: companyObject?.tradeName,
+            phone: companyObject?.phone,
+            type: companyObject?.type,
+            location: companyObject?.location?.id,
         });
         async function fetchData() {
 
-            
+
             const response = await fetch('https://localhost:7174/api/LocationModels',
                 {
 
@@ -228,32 +213,33 @@ function CustomModalContacts(props) {
                 label: location.name,
 
             }))
-            setLocations(data);
-            
+            setLocations(optionsforSelect);
+
         };
 
         fetchData();
         //setLocationOptions(contactObject?.locationID);
-    }, [contactObject]);
+    }, [companyObject]);
+
 
     return (
         <>
             <Button type="primary" onClick={showModal}>
-                {props.status == 1 ? "Add Contact" : "Edit"}
+                {props.status == 1 ? "Add Company" : "Edit"}
             </Button>
 
             <Modal
-                title={props.status == 1 ? "Add Contact" : "Edit"}
+                title={props.status == 1 ? "Add Company" : "Edit"}
                 open={open}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={null}
-                forceRender 
+                forceRender
 
             >
 
-                
+
 
 
 
@@ -269,57 +255,42 @@ function CustomModalContacts(props) {
                         console.log({ error });
                     }}
                     form={form}
-                    
+
                 >
                     <Form.Item
-                        name="firstName"
-                        label="First Name"
+                        name="name"
+                        label="Name"
                         rules={[
                             {
                                 required: true,
-                                message: "Please enter your name",
+                                message: "Please enter name",
                             },
                             { whitespace: true },
                             { min: 3 },
                         ]}
                         hasFeedback
                     >
-                        <Input type="text" placeholder="Type your name" value={contactObject?.firstName}></Input>
+                        <Input type="text" placeholder="Type name" value={companyObject?.name}></Input>
                     </Form.Item>
 
                     <Form.Item
-                        name="lastName"
-                        label="Last Name"
+                        name="tradeName"
+                        label="Trade Name"
                         rules={[
                             {
                                 required: true,
-                                message: "Please enter your name",
+                                message: "Please enter Trade Name",
                             },
                             { whitespace: true },
                             { min: 3 },
                         ]}
                         hasFeedback
                     >
-                        <Input placeholder="Type your name" value={contactObject?.firstName} />
+                        <Input placeholder="Type your name" value={companyObject?.tradeName} />
                     </Form.Item>
 
                     <Form.Item
-                        name="email"
-                        label="Email"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter your email",
-                            },
-                            { type: "email", message: "Please enter a valid email" },
-                        ]}
-                        hasFeedback
-                    >
-                        <Input placeholder="Type your email" />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="phoneNumber"
+                        name="phone"
                         label="Phone number"
                         rules={[
                             {
@@ -334,21 +305,40 @@ function CustomModalContacts(props) {
                         <Input placeholder="Type your phone number" type="number" />
                     </Form.Item>
 
-                    <Form.Item name="location" label="Location" requiredMark="optional">
-                        <Select placeholder="Select your location" >
-                            {locations?.map(location => (
-                                <Select.Option value={location.id} key={location.name}>
-                                    {location.name}
-                                </Select.Option>
-                            ))}
-                            
-                                    
+                    <Form.Item name="type" label="Select" rules={[
+                        {
+                            required: true,
+                            message: "Please select type",
+                        },
+                        { whitespace: true },
+                    ]}>
+                        <Select placeholder="Select type" options={[
+                            {
+                                value: 'Vendor',
+                                label: 'Vendor',
+                            },
+                            {
+                                value: 'Customer',
+                                label: 'Customer',
+                            },
+                        ]} >
+
+
+
                         </Select>
                     </Form.Item>
-                    
+
+                    <Form.Item name="location" label="Location" requiredMark="optional">
+                        <Select placeholder="Select your location" options={locations ?? []} >
 
 
-                   
+
+                        </Select>
+                    </Form.Item>
+
+
+
+
 
                     <Form.Item wrapperCol={{ span: 24 }}>
                         <Button block type="primary" htmlType="submit">
@@ -363,8 +353,9 @@ function CustomModalContacts(props) {
         </>
     );
 
-       
+
+
 }
 
 
-export default CustomModalContacts;
+export default CustomModalCompany;

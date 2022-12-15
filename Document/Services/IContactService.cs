@@ -6,8 +6,8 @@ namespace Document.Services
     {
         Task<IEnumerable<ViewContact>> GetAllContacts();
         Task<ContactsModel> GetContactByID(Guid id);
-        Task<ContactsModel> UpdateContactByID(CreateUpdateContact contact, Guid id);
-        Task<ContactsModel> CreateContact(CreateUpdateContact contact);
+        Task<ViewContact> UpdateContactByID(CreateUpdateContact contact, Guid id);
+        Task<ViewContact> CreateContact(CreateUpdateContact contact);
         Task<ContactsModel> DeleteContact(Guid id);
     }
 }

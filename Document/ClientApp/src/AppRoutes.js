@@ -1,5 +1,6 @@
 import ApiAuthorzationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import Category from './components/Category';
+import Company from './components/Company';
 import Contacts from './components/Contacts';
 import { Counter } from "./components/Counter";
 import CustomCalendar from './components/CustomCalendar';
@@ -35,6 +36,11 @@ const AppRoutes = [
         path: '/locations',
         requireAuth: true,
         element: <Location />
+    },
+    {
+        path: '/company',
+        requireAuth: true,
+        element: <Company />
     },
   ...ApiAuthorzationRoutes
 ];

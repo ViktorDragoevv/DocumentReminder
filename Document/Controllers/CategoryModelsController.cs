@@ -56,7 +56,7 @@ namespace Document.Controllers
         // PUT: api/CategoryModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategoryModel(int id, CategoryModel categoryModel)
+        public async Task<IActionResult> PutCategoryModel(Guid id, CategoryModel categoryModel)
         {
             if (id != categoryModel.ID)
             {
@@ -101,7 +101,7 @@ namespace Document.Controllers
 
         // DELETE: api/CategoryModels/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoryModel(int id)
+        public async Task<IActionResult> DeleteCategoryModel(Guid id)
         {
             if (_context.CategoryModel == null)
             {
@@ -119,7 +119,7 @@ namespace Document.Controllers
             return NoContent();
         }
 
-        private bool CategoryModelExists(int id)
+        private bool CategoryModelExists(Guid id)
         {
             return (_context.CategoryModel?.Any(e => e.ID == id)).GetValueOrDefault();
         }

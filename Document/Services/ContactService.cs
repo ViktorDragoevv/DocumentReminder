@@ -27,18 +27,23 @@ namespace Document.Services
             return contactsList;
         }
 
-        public async Task<ContactsModel> UpdateContactByID(CreateUpdateContact contact, Guid id)
+        public async Task<ViewContact> UpdateContactByID(CreateUpdateContact contact, Guid id)
         {
             var existingContact = await _contactRepository.GetByIdAsync(id);
             if (existingContact == null) { throw new ArgumentNullException("Contact not exsisting", nameof(CreateUpdateContact)); }
             existingContact.Copy(contact);
-            return await _contactRepository.UpdateAsync(existingContact);
+            var contactModel = await _contactRepository.UpdateAsync(existingContact);
+            var updatedContact = await _contactRepository.GetContactWithLocationByIdAsync(id);
+            var toMNodel = updatedContact.ToModel();
+            return toMNodel;
         }
 
-        public async Task<ContactsModel> CreateContact(CreateUpdateContact contact)
+        public async Task<ViewContact> CreateContact(CreateUpdateContact contact)
         {
             var contactEntity = contact.ToEntity(Guid.NewGuid());
-            return await _contactRepository.AddAsync(contactEntity);
+            var newContact =  await _contactRepository.AddAsync(contactEntity);
+            var createdContact = await _contactRepository.GetContactWithLocationByIdAsync(newContact.ID);
+            return createdContact.ToModel();
         }
 
         public Task<ContactsModel> DeleteContact(Guid id)

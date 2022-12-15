@@ -14,10 +14,12 @@ namespace Document.Models
         public string City { get; set; }
 
         public virtual ICollection<ContactsModel> Contacts { get; set; }
+        public virtual ICollection<CompanyModel> Company { get; set; }
 
         public LocationModel()
         {
             Contacts = new HashSet<ContactsModel>();
+            Company = new HashSet<CompanyModel>();
         }
         public void Copy(ViewLocation locationView)
         {

@@ -72,7 +72,7 @@ function CustomModal(props) {
 
         console.log(object.id);
         var jsonDataa = {
-            "id": parseInt(object.id),
+            "id": object.id,
             "categoryName": input.category.toString()
         }
 

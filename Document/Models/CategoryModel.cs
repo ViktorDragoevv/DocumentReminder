@@ -1,9 +1,12 @@
-﻿namespace Document.Models
-{
-    public class CategoryModel
-    {
+﻿using Document.Repositories;
+using System.ComponentModel.DataAnnotations;
 
-            public int ID { get; set; }
+namespace Document.Models
+{
+    public class CategoryModel : IEntity
+    {
+        [Key]
+            public Guid ID { get; set; }
             public string CategoryName { get; set; }
 
     }

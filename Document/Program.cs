@@ -29,6 +29,7 @@ builder.Services.AddIdentityServer()
 
 //builder.Services.AddAuthentication().AddIdentityServerJwt();
 
+//builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRD-TOKEN");
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -62,6 +63,9 @@ builder.Services.AddScoped<IContactService, ContactService>();
 
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -147,6 +151,7 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
         ValidAudience = "http://localhost:16667",
         ValidIssuer = "http://localhost:16667",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ThisismySecretKey"))

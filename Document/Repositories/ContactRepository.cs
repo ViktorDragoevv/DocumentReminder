@@ -16,5 +16,12 @@ namespace Document.Repositories
         {
             return await Context.ContactsModel.Include(x => x.LocationModel).ToListAsync();
         }
+
+        public Task<ContactsModel> GetContactWithLocationByIdAsync(Guid id)
+        {
+            return Context.ContactsModel
+                .Include(x => x.LocationModel)
+                .FirstOrDefaultAsync(x => x.ID == id);
+        }
     }
 }

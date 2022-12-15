@@ -75,7 +75,7 @@ namespace Document.Controllers
         // PUT: api/ContactsModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<ContactsModel>> PutContactsModel(Guid id, CreateUpdateContact contactsModel)
+        public async Task<ActionResult<ViewContact>> PutContactsModel(Guid id, CreateUpdateContact contactsModel)
         {
            /* if (id != contactsModel.ID)
             {
@@ -110,7 +110,7 @@ namespace Document.Controllers
         // POST: api/ContactsModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ContactsModel>> PostContactsModel(CreateUpdateContact contactsModel)
+        public async Task<ActionResult<ViewContact>> PostContactsModel(CreateUpdateContact contactsModel)
         {
             /*if (_context.ContactsModel == null)
             {
