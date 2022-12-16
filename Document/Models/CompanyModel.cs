@@ -14,6 +14,7 @@ namespace Document.Models
         public string Type { get; set; }
         public Guid? LocationID { get; set; }
         public virtual LocationModel? LocationModel { get; set; }
+        public virtual ICollection<DocumentModel>? Documents { get; set; }
 
 
         public void Copy(CreateUpdateCompany createUpdateCompany)

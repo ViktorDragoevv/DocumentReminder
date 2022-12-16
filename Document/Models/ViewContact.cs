@@ -1,4 +1,4 @@
-﻿namespace Document.Models
+﻿ namespace Document.Models
 {
     public class ViewContact
     {

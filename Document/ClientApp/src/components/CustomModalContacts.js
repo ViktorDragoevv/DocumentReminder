@@ -64,11 +64,11 @@ function CustomModalContacts(props) {
         //refreshPage();
 
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addContact(contactObject.categoryName);
         }
         else if (props.status == 2) {
             console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            editContact(contactObject.categoryName);
         }
 
 
@@ -84,7 +84,7 @@ function CustomModalContacts(props) {
     };
 
 
-    const addcategory = async (input) => {
+    const addContact = async (input) => {
         console.log(input);
         var data = {
             firstName : input.firstName,
@@ -110,7 +110,7 @@ function CustomModalContacts(props) {
         props.update(newContact);
 
     }
-    const editCategory = async (input) => {
+    const editContact = async (input) => {
         // jsonDataa;
         console.log(input);
         var editedContact = await fetch('https://localhost:7174/api/ContactsModels/' + contactObject.id, {
@@ -176,11 +176,11 @@ function CustomModalContacts(props) {
         
         setOpen(false);
         if (props.status == 1) {
-            addcategory(values);
+            addContact(values);
         }
         else if (props.status == 2) {
             console.log(contactObject);
-            editCategory(values);
+            editContact(values);
             console.log(values);
         }
     };
@@ -189,11 +189,11 @@ function CustomModalContacts(props) {
         event.preventDefault();
         console.log(props.status);
         if (props.status == 1) {
-            addcategory(contactObject.categoryName);
+            addContact(contactObject.categoryName);
         }
         else if (props.status == 2) {
             console.log(contactObject);
-            editCategory(contactObject.categoryName);
+            editContact(contactObject.categoryName);
         }
     }
 

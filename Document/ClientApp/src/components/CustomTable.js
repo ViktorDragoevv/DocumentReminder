@@ -161,13 +161,7 @@ function CustomTable(props) {
 
 
     const columns = [
-       /* {
-            title: 'id',
-            dataIndex: 'id',
-            key: 'id',
-            width: '30%',
-            ...getColumnSearchProps('id'),
-        },*/
+     
         {
             title: 'categoryName',
             dataIndex: 'categoryName',

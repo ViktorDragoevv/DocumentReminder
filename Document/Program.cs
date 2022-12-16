@@ -67,6 +67,9 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 

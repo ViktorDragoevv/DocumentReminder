@@ -18,6 +18,10 @@ namespace Document.Data
         public DbSet<Document.Models.CategoryModel> CategoryModel { get; set; } = default!;
         public DbSet<Document.Models.ContactsModel> ContactsModel { get; set; } = default!;
         public DbSet<Document.Models.CompanyModel> CompanyModel { get; set; } = default!;
+        public DbSet<Document.Models.LocationModel> LocationModel { get; set; } = default!;
+        public DbSet<Document.Models.NotifyModel> NotifyModels { get; set; } = default!;
+        public DbSet<Document.Models.Files> Files { get; set; } = default!;
+        public DbSet<Document.Models.DocumentModel> DocumentModels { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,9 +32,12 @@ namespace Document.Data
             builder.ApplyConfiguration(new ContactConfiguration());
             builder.ApplyConfiguration(new LocationConfiguration());
             builder.ApplyConfiguration(new CompanyConfiguration());
+            builder.ApplyConfiguration(new NotifyConfiguration());
+            builder.ApplyConfiguration(new FilesConfiguration());
+            builder.ApplyConfiguration(new DocumentConfiguration());
         }
 
-        public DbSet<Document.Models.LocationModel> LocationModel { get; set; } = default!;
+        
     }
 
 

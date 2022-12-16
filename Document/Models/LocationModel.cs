@@ -13,8 +13,9 @@ namespace Document.Models
         public string Address { get; set; }
         public string City { get; set; }
 
-        public virtual ICollection<ContactsModel> Contacts { get; set; }
-        public virtual ICollection<CompanyModel> Company { get; set; }
+        public virtual ICollection<ContactsModel>? Contacts { get; set; }
+        public virtual ICollection<CompanyModel>? Company { get; set; }
+        public virtual ICollection<DocumentModel>? Documents { get; set; }
 
         public LocationModel()
         {

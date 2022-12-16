@@ -4,6 +4,7 @@ using Document.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Document.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221216103231_AddedDocumentNotifyFilesModels")]
+    partial class AddedDocumentNotifyFilesModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,16 +289,8 @@ namespace Document.Data.Migrations
                     b.Property<Guid?>("ContactID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Days")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("DocumentID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Send")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.HasKey("ID");
 

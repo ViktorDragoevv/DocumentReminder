@@ -18,6 +18,11 @@ namespace Document.Models
 
         public virtual LocationModel? LocationModel  { get; set;}
 
+        public virtual ICollection<DocumentModel>? Documents { get; set; }
+
+        public virtual ICollection<NotifyModel>? NotifyModel { get; set; }
+
+
         public void Copy(CreateUpdateContact createUpdateContact)
         {
             FirstName = createUpdateContact.FirstName;

@@ -7,6 +7,7 @@ import CustomCalendar from './components/CustomCalendar';
 import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
 import Location from './components/Locations';
+import Documents from './components/Documents';
 
 const AppRoutes = [
   {
@@ -41,6 +42,11 @@ const AppRoutes = [
         path: '/company',
         requireAuth: true,
         element: <Company />
+    },
+    {
+        path: '/documents',
+        requireAuth: true,
+        element: <Documents />
     },
   ...ApiAuthorzationRoutes
 ];
