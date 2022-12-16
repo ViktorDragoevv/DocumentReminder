@@ -94,16 +94,14 @@ namespace Document.Controllers
         // POST: api/DocumentModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DocumentModel>> PostDocumentModel(DocumentModel documentModel)
+        public async Task<ActionResult<ViewDocument>> PostDocumentModel(CreateUpdateDocumentcs documentModel)
         {
-          if (_context.DocumentModels == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.DocumentModels'  is null.");
-          }
-            _context.DocumentModels.Add(documentModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDocumentModel", new { id = documentModel.ID }, documentModel);
+            var document = await _documentService.CreateDocument(documentModel);
+            if (document == null)
+            {
+                return NotFound();
+            }
+            return (document);
         }
 
         // DELETE: api/DocumentModels/5

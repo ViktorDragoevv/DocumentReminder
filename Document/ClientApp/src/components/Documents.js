@@ -8,9 +8,8 @@ import Highlighter from 'react-highlight-words';
 import authService from "./api-authorization/AuthorizeService";
 import CustomModal from "./CustomModal";
 import CustomTable from "./CustomTable";
-import CustomModalContacts from "./CustomModalContacts";
+import CustomModalDocument from "./CustomModalDocument";
 import { useCookies } from "react-cookie";
-import CustomModalCompany from "./CustomModalCompany";
 
 
 
@@ -52,6 +51,7 @@ function Documents() {
             id: document.id,
             name: document.name,
             status: document.status,
+            comments: document.comments,
             viewCategory: document?.viewCategory,
             categoryName: document?.viewCategory.categoryName,
             viewCompany: document?.viewCompany,
@@ -59,6 +59,8 @@ function Documents() {
             viewContact: document?.viewContact,
             locationName: document?.viewLocation.name,
             viewLocation: document?.viewLocation,
+            contactName: document?.viewContact.firstName,
+            expirationDate: document?.expirationDate,
 
         }))
         return mappedArray;
@@ -244,6 +246,32 @@ function Documents() {
             sorter: (a, b) => a.locationName.length - b.locationName.length,
             sortDirections: ['descend', 'ascend'],
         },
+        {
+            title: 'contactName',
+            dataIndex: 'contactName',
+            key: 'contactName',
+            ...getColumnSearchProps('contactName'),
+            sorter: (a, b) => a.contactName.length - b.contactName.length,
+            sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'comments',
+            dataIndex: 'comments',
+            key: 'comments',
+            ...getColumnSearchProps('comments'),
+            sorter: (a, b) => a.comments.length - b.comments.length,
+            sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'expirationDate',
+            dataIndex: 'expirationDate',
+            key: 'expirationDate',
+            ...getColumnSearchProps('expirationDate'),
+            sorter: (a, b) => a.expirationDate.length - b.expirationDate.length,
+            sortDirections: ['descend', 'ascend'],
+        },
+
+
     ];
 
     const onSelectChange = (newSelectedRowKeys) => {
@@ -272,8 +300,8 @@ function Documents() {
             <Button type="primary" onClick={deleteContacts} disabled={!selectedDocumentObject}>
                 Delete
             </Button>
-            <CustomModalContacts status={1} update={addDocumentFromChild}></CustomModalContacts>
-            <CustomModalContacts status={2} update={updateDocumentyFromChild} selectedRowKeys={selectedDocumentObject}></CustomModalContacts>
+            <CustomModalDocument status={1} update={addDocumentFromChild}></CustomModalDocument>
+            <CustomModalDocument status={2} update={updateDocumentyFromChild} selectedRowKeys={selectedDocumentObject}></CustomModalDocument>
             <div style={{ marginBottom: 16 }}>
                 <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}

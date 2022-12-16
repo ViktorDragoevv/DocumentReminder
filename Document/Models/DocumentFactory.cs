@@ -18,8 +18,27 @@
                     Comments = documentModel.Comments,
                     ExpirationDate = documentModel.ExpirationDate,
                     CreatedDate = documentModel.CreatedDate,
-                    Notify = documentModel.NotifyModels.Select(x => x.ToModel()),
+                    Notify = documentModel.NotifyModels.Select(x => x.ToModel()),  
 
                 };
+
+        public static DocumentModel ToEntity(this CreateUpdateDocumentcs documentModel, Guid contactID)
+        {
+            return documentModel == null
+                ? null
+                : new DocumentModel
+                {
+                    ID = contactID,
+                    CategoryID = documentModel.CategoryID,
+                    Name = documentModel.Name,
+                    Status = documentModel.Status,
+                    ContactID = documentModel.ContactID,
+                    LocationID = documentModel.LocationID,
+                    CompanyID = documentModel.CompanyID,
+                    Comments = documentModel.Comments,
+                    ExpirationDate = documentModel.ExpirationDate,
+                    CreatedDate = DateTime.Now,
+                };
+        }
     }
 }
