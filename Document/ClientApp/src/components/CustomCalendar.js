@@ -1,50 +1,65 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { BadgeProps } from 'antd';
 import { Badge, Calendar } from 'antd';
-import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import { useCookies } from "react-cookie";
 
 
 
 
 function CustomCalendar() {
-const getListData = (value) => {
+
+
+
+    const [dataDocuments, setDataDocuments] = useState();
+    const [cookies, setCookie] = useCookies();
+
+    useEffect(() => {
+
+        async function fetchData() {
+
+            //const token = await authService.getAccessToken();
+            const response = await fetch('https://localhost:7174/api/DocumentModels', {
+                headers: !cookies.Authorization ? {} : { 'Authorization': `${cookies.Authorization}` },
+                //headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+                //headers: { 'Access-Control-Allow-Origin': '*' },
+                //headers: { 'content-type': 'application/json; charset=utf-8' }
+            });
+            let data = await response.json();
+            setDataDocuments(data);
+
+            console.log(data);
+        };
+
+        fetchData();
+    }, []);
+    //console.log(date)
+    const getListData = (value) => {
     let listData;
-    switch (value.date()) {
-        case 8:
-            listData = [
-                { type: 'warning', content: 'This is warning event.' },
-                { type: 'success', content: 'This is usual event.' },
+        for (let i = 0; i < dataDocuments?.length; i++) {
+        
+            if (convert(value) == convert(dataDocuments[i].expirationDate)) {
+        listData = [
+            { type: 'warning', content: `${dataDocuments[i].viewContact.firstName} You have ${dataDocuments[i].name} expiring today`},
             ];
-            break;
-        case 10:
-            listData = [
-                { type: 'warning', content: 'This is warning event.' },
-                { type: 'success', content: 'This is usual event.' },
-                { type: 'error', content: 'This is error event.' },
-            ];
-            break;
-        case 15:
-            listData = [
-                { type: 'warning', content: 'This is warning event' },
-                { type: 'success', content: 'This is very long usual event。。....' },
-                { type: 'error', content: 'This is error event 1.' },
-                { type: 'error', content: 'This is error event 2.' },
-                { type: 'error', content: 'This is error event 3.' },
-                { type: 'error', content: 'This is error event 4.' },
-            ];
-            break;
-        default:
+        }
     }
     return listData || [];
 };
-
+    
 
 const getMonthData = (value) => {
     if (value.month() === 8) {
         return 1394;
     }
+    
 };
-
+    function convert(str) {
+        var date = new Date(str),
+            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+            day = ("0" + date.getDate()).slice(-2);
+        return [date.getFullYear(), mnth, day].join("-");
+    }
 
     const monthCellRender = (value) => {
         const num = getMonthData(value);
@@ -67,9 +82,10 @@ const getMonthData = (value) => {
                 ))}
             </ul>
         );
+        
     };
 
-    return <Calendar dateCellRender={dateCellRender} monthCellRender={monthCellRender} />;
+    return <Calendar dateCellRender={dateCellRender} monthCellRender={monthCellRender}  />;
 };
 
 export default CustomCalendar;

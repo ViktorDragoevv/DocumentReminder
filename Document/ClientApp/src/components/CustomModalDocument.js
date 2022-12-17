@@ -1,7 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, Modal } from 'antd';
 import * as yup from "yup";
 import { useCookies } from "react-cookie";
+import CustomModalNotifications from "./CustomModalNotifications";
 import dayjs from 'dayjs';
 import {
     Cascader,
@@ -12,9 +13,9 @@ import {
     Mentions,
     Select,
     TimePicker,
-    TreeSelect,
+    Table,
+    Popconfirm,
 } from 'antd';
-
 
 function CustomModalDocument(props) {
 
@@ -33,6 +34,7 @@ function CustomModalDocument(props) {
     const [modalText, setModalText] = useState('Content of the modal');
     const { Option } = Select;
     const dateFormat = 'YYYY/MM/DD';
+    
 
 
     const showModal = () => {
@@ -104,22 +106,32 @@ function CustomModalDocument(props) {
 
     }
     const editDocument = async (input) => {
-        // jsonDataa;
+        var data = {
+            ID: documentObject.id,
+            CategoryID: input.category,
+            Name: input.name,
+            Status: input.status,
+            ContactID: input.contact,
+            locationID: input.location,
+            CompanyID: input.company,
+            Comments: input.comment,
+            ExpirationDate: convert(input.date),
+        }
         console.log(input);
-        var editedContact = await fetch('https://localhost:7174/api/DocumentModels/' + documentObject.id, {
+        var editedDocument = await fetch('https://localhost:7174/api/DocumentModels/' + documentObject.id, {
             method: 'PUT',
             mode: 'cors',
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Authorization': `${cookies.Authorization}`
             }),
-            body: JSON.stringify({ ...input, id: documentObject.id, locationID: input.location })
+            body: JSON.stringify(data)
 
         })
 
         var updatedContactLocation = locations.filter(x => x.value == input.location);
         //props.update({ ...input, id: contactObject.id, viewLocation: { id: updatedContactLocation[0]?.value, name: updatedContactLocation[0]?.label } });
-        var editedContactResponse = await editedContact.json();
+        var editedContactResponse = await editedDocument.json();
         console.log(editedContactResponse);
         props.update(editedContactResponse);
 
@@ -170,9 +182,229 @@ function CustomModalDocument(props) {
             editDocument(documentObject.categoryName);
         }
     }
+
+
+
+
+
+
+
+
+
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+    const onSelectChange = (newSelectedRowKeys) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+
+        //let selectedContactObject = findArrayElementById(dataDocuments, newSelectedRowKeys);
+        //setSelectedDocumentObject(selectedContactObject);
+    };
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+        type: 'radio',
+    };
+
+    const ColumnsType = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Age',
+            dataIndex: 'age',
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+        },
+    ];
+    //
+
+
+
+
+
+
+    const EditableContext = React.createContext (null);
+
+
+    const EditableRow  = ({ index, ...props }) => {
+        const [form] = Form.useForm();
+        return (
+            <Form form={form} component={false}>
+                <EditableContext.Provider value={form}>
+                    <tr {...props} />
+                </EditableContext.Provider>
+            </Form>
+        );
+    };
+
+
+    const EditableCell = ({
+        title,
+        editable,
+        children,
+        dataIndex,
+        record,
+        handleSave,
+        ...restProps
+    }) => {
+        const [editing, setEditing] = useState(false);
+        const inputRef = useRef (null);
+        const form = useContext(EditableContext);
+
+        useEffect(() => {
+            if (editing) {
+                inputRef.current.focus();
+            }
+        }, [editing]);
+
+        const toggleEdit = () => {
+            setEditing(!editing);
+            form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+        };
+
+        const save = async () => {
+            try {
+                const values = await form.validateFields();
+
+                toggleEdit();
+                handleSave({ ...record, ...values });
+            } catch (errInfo) {
+                console.log('Save failed:', errInfo);
+            }
+        };
+
+        let childNode = children;
+
+        if (editable) {
+            childNode = editing ? (
+                <Form.Item
+                    style={{ margin: 0 }}
+                    name={dataIndex}
+                    rules={[
+                        {
+                            required: true,
+                            message: `${title} is required.`,
+                        },
+                    ]}
+                >
+                    <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+                </Form.Item>
+            ) : (
+                <div className="editable-cell-value-wrap" style={{ paddingRight: 24 }} onClick={toggleEdit}>
+                    {children}
+                </div>
+            );
+        }
+
+        return <td {...restProps}>{childNode}</td>;
+    };
+
+    const [notifyContact, setNotifyContact] = useState();
+    const setContactForNotify = (value, label)  => {
+        setNotifyContact(label);
+        //console.log(event.target.id);
+        console.log(notifyContact);
+    }
+
+        const [dataSource, setDataSource] = useState ([]);
+
+        const [count, setCount] = useState(2);
+
+    const handleDelete = (key) => {
+        const newData = dataSource.filter((item) => item.key !== key);
+        setDataSource(newData);
+    };
+
+    const defaultColumns = [
+        /*{
+            title: 'idContact',
+            dataIndex: 'idContact',
+            width: '30%',
+            editable: true,
+        },*/
+            {
+                title: 'contact',
+                dataIndex: 'contact',
+                width: '30%',
+                editable: true,
+            },
+            {
+                title: 'days',
+                dataIndex: 'days',
+                editable: true,
+            },
+            {
+                title: 'operation',
+                dataIndex: 'operation',
+                render: (_, record) =>
+                    dataSource.length >= 1 ? (
+                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                            <a>Delete</a>
+                        </Popconfirm>
+                    ) : null,
+            },
+        ];
+
+    const handleAdd = () => {
+        console.log(notifyContact.key);
+        console.log(dataSource);
+            const newData = {
+                key: count,
+                contact: notifyContact.key,
+                days: '3',
+                idContact: notifyContact.value,
+            };
+            setDataSource([...dataSource, newData]);
+        setCount(count + 1);
+        console.log(dataSource);
+        };
+
+        const handleSave = (row) => {
+            const newData = [...dataSource];
+            const index = newData.findIndex((item) => row.key === item.key);
+            const item = newData[index];
+            newData.splice(index, 1, {
+                ...item,
+                ...row,
+            });
+            setDataSource(newData);
+        };
+
+        const components = {
+            body: {
+                row: EditableRow,
+                cell: EditableCell,
+            },
+        };
+
+        const columns = defaultColumns.map((col) => {
+            if (!col.editable) {
+                return col;
+            }
+            return {
+                ...col,
+                onCell: (record) => ({
+                    record,
+                    editable: col.editable,
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    handleSave,
+                }),
+            };
+        });
+
+
+
+
+
+
    
 
-
+    //
     const [form] = Form.useForm();
     React.useEffect(() => {
         form.setFieldsValue({
@@ -187,6 +419,17 @@ function CustomModalDocument(props) {
             date: dayjs(documentObject?.expirationDate),
         });
         console.log(dayjs(documentObject?.expirationDate));
+        console.log(documentObject);
+
+        setDataSource(documentObject?.notify.map((document, index) => ({
+            idContact: document.id,
+            key: document.id,
+            days: document.days,
+            contact : document?.contactModel?.firstName,
+        })));
+        
+
+
         async function fetchLocation() {
 
 
@@ -273,6 +516,7 @@ function CustomModalDocument(props) {
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={null}
+                width={ 800}
                 forceRender
 
             >
@@ -283,7 +527,7 @@ function CustomModalDocument(props) {
 
                 <Form
                     autoComplete="off"
-                    labelCol={{ span: 10 }}
+                    labelCol={{ span: 7 }}
                     wrapperCol={{ span: 14 }}
                     onFinish={(values) => {
                         console.log({ values });
@@ -352,9 +596,42 @@ function CustomModalDocument(props) {
                     </Form.Item>
                     <Form.Item name="date" label="Date" requiredMark="required">
                        
-                    <DatePicker format={dateFormat} value={dayjs(documentObject?.name, 'YYYY-MM-DD')} />
+                        <DatePicker format={dateFormat} value={dayjs(documentObject?.name, 'YYYY-MM-DD')} />
+
                         
                     </Form.Item>
+                    <Input.Group>
+                    <Form.Item name="notify" label="Notifications" requiredMark="optional" >
+                            <div>
+                        
+                        <Table
+                            components={components}
+                            rowClassName={() => 'editable-row'}
+                            bordered
+                            dataSource={dataSource}
+                            columns={columns}
+                            size= "small"
+                        />
+                            {"\n"}
+                        
+                            <Select placeholder="Select contact for notification" onSelect={(value, label) => setContactForNotify(value, label)}>
+                                {contactsSelect?.map(contactsSelect => (
+                                    <Select.Option value={contactsSelect.id} key={contactsSelect.firstName} >
+                                        {contactsSelect.firstName}
+                                    </Select.Option>
+                                ))}
+
+
+                            </Select>
+                                {"\n"}
+                                <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }} shape ="round" >
+                            Add
+                                </Button>
+                            </div>
+                        </Form.Item>
+                        
+                        </Input.Group>
+                   
 
                     <Form.Item name="comment" label="Comments">
 

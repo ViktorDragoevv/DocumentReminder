@@ -6,5 +6,6 @@ namespace Document.Services
     {
         Task<IEnumerable<ViewDocument>> GetAllDocuments();
         Task<ViewDocument> CreateDocument(CreateUpdateDocumentcs document);
+        Task<ViewDocument> UpdateDocumentByID(CreateUpdateDocumentcs contact, Guid id);
     }
 }

@@ -61,12 +61,13 @@ function Documents() {
             viewLocation: document?.viewLocation,
             contactName: document?.viewContact.firstName,
             expirationDate: document?.expirationDate,
+            notify : document?.notify
 
         }))
         return mappedArray;
     };
 
-    const deleteContacts = () => {
+    const deleteDocument = () => {
 
 
         console.log(selectedDocumentObject.id);
@@ -77,7 +78,7 @@ function Documents() {
             "ID": selectedDocumentObject.id
         }
 
-        fetch('https://localhost:7174/api/DocumentsModel/' + selectedDocumentObject.id, {
+        fetch('https://localhost:7174/api/DocumentModels/' + selectedDocumentObject.id, {
             method: 'DELETE',
             mode: 'cors',
             headers: new Headers({
@@ -297,7 +298,7 @@ function Documents() {
     return (
 
         <div>
-            <Button type="primary" onClick={deleteContacts} disabled={!selectedDocumentObject}>
+            <Button type="primary" onClick={deleteDocument} disabled={!selectedDocumentObject}>
                 Delete
             </Button>
             <CustomModalDocument status={1} update={addDocumentFromChild}></CustomModalDocument>

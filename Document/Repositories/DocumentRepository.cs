@@ -29,7 +29,7 @@ namespace Document.Repositories
                 .Include(x => x.CategoryModel)
                 .Include(x => x.ContactsModel)
                 .Include(x => x.Files)
-                .Include(x => x.NotifyModels)
+                .Include(x => x.NotifyModels).ThenInclude(x => x.ContactModel)
                 .Include(x => x.CompanyModel).ToListAsync();
         }
     }

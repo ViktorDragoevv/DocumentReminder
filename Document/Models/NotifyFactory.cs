@@ -10,6 +10,7 @@
             ID = notifyModel.ID,
             Days = notifyModel.Days,
             Send = notifyModel.Send,
+            ContactModel = notifyModel.ContactModel.ToModel(),
         };
     }
 }

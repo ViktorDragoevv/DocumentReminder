@@ -26,5 +26,16 @@ namespace Document.Services
             var documentsList = documentsModels.Select(x => x.ToModel());
             return documentsList;
         }
+
+        public async Task<ViewDocument> UpdateDocumentByID(CreateUpdateDocumentcs document, Guid id)
+        {
+            var existingDocument = await _documentRepository.GetByIdAsync(id);
+            if (existingDocument == null) { throw new ArgumentNullException("Document not exsist", nameof(CreateUpdateContact)); }
+            existingDocument.Copy(document);
+            var documentModel = await _documentRepository.UpdateAsync(existingDocument);
+            var updatedDocument = await _documentRepository.GetAllDocumentsWithViewByID(id);
+            var toMNodel = updatedDocument.ToModel();
+            return toMNodel;
+        }
     }
 }

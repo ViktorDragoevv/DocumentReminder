@@ -63,32 +63,9 @@ namespace Document.Controllers
         // PUT: api/DocumentModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDocumentModel(Guid id, DocumentModel documentModel)
+        public async Task<ActionResult<ViewDocument>> PutDocumentModel(Guid id, CreateUpdateDocumentcs documentModel)
         {
-            if (id != documentModel.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(documentModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DocumentModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _documentService.UpdateDocumentByID(documentModel, id);
         }
 
         // POST: api/DocumentModels

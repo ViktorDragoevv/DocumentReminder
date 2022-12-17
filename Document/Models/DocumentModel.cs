@@ -1,6 +1,7 @@
 ﻿using Document.Repositories;
 using NuGet.Packaging.Signing;
 using System.ComponentModel.DataAnnotations;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace Document.Models
 {
@@ -25,7 +26,19 @@ namespace Document.Models
         public virtual ICollection<NotifyModel>? NotifyModels { get; set; }
 
 
-
+        public void Copy(CreateUpdateDocumentcs createUpdateDocument)
+        {
+            ID = createUpdateDocument.ID;
+            CategoryID = createUpdateDocument.CategoryID;
+            Status = createUpdateDocument.Status;
+            Name = createUpdateDocument.Name;
+            LocationID = createUpdateDocument.LocationID;
+            ContactID = createUpdateDocument.ContactID;
+            CompanyID = createUpdateDocument.CompanyID;
+            Comments = createUpdateDocument.Comments;
+            ExpirationDate = createUpdateDocument.ExpirationDate;
+            CreatedDate = createUpdateDocument.CreatedDate;
+        }
 
     }
 }
