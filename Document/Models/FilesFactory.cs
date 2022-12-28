@@ -8,8 +8,8 @@
         : new ViewFiles
         {
             ID = filesModel.ID,
-            Content = filesModel.Content,
-            FileName = filesModel.FileName
+            ImageName = filesModel.ImageName,
+            ImagePath = filesModel.ImagePath
         };
     }
 }

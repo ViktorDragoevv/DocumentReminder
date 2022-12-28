@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Document.Infrastructure;
 using Document.AuthServices;
+using Document.Middleware.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 var policyName = "_myAllowSpecificOrigins"; // cors
@@ -69,6 +70,14 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+
+builder.Services.AddScoped<INotifyService, NotifyService>();
+builder.Services.AddScoped<INotifyRepository, NotifyRepository>();
+
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IFileService, FileService>();
+
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -162,9 +171,22 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+//RateLimiter
+builder.Services.AddRateLimiting(builder.Configuration);
+
+
+//
+
+
 
 
 var app = builder.Build();
+
+// Use Rate Limiting
+app.UseRateLimiting();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

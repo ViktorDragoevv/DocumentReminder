@@ -8,8 +8,8 @@ namespace Document.Models
     {
         [Key]
         public Guid ID { get; set; }
-        public byte[] Content { get; set; }
-        public string FileName { get; set; }
+        public string ImageName { get; set; }
+        public string ImagePath { get; set; }
         public Guid? DocumentID { get; set; }
         public virtual DocumentModel? DocumentModel { get; set; }
     }

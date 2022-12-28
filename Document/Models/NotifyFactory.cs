@@ -12,5 +12,19 @@
             Send = notifyModel.Send,
             ContactModel = notifyModel.ContactModel.ToModel(),
         };
+
+        public static NotifyModel ToEntity(this CreateUpdateNotify notifyModel, Guid notifyID)
+        {
+            return notifyModel == null
+                ? null
+                : new NotifyModel
+                {
+                    ID = notifyID,
+                    Days = notifyModel.Days,
+                    Send = notifyModel.Send,
+                    ContactID = notifyModel.ContactID,
+                    DocumentID = notifyModel.DocumentID,
+                };
+        }
     }
 }

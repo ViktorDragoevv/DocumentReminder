@@ -148,6 +148,11 @@ namespace Document.Areas.Identity.Pages.Account
                     
                     return Redirect(returnUrl);
                 }
+                if(!result.Succeeded)
+                {
+                    var data = _userManager.GetLockoutEnabledAsync(user);
+                    await _userManager.AccessFailedAsync(user);
+                }
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });

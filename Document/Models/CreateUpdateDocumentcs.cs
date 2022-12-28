@@ -12,5 +12,6 @@
         public string Comments { get; set; }
         public DateTime ExpirationDate { get; set; }
         public DateTime CreatedDate { get; set; }
+        public Guid? fileID { get; set; }
     }
 }

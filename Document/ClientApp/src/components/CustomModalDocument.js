@@ -4,13 +4,19 @@ import * as yup from "yup";
 import { useCookies } from "react-cookie";
 import CustomModalNotifications from "./CustomModalNotifications";
 import dayjs from 'dayjs';
+import { UploadOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { UploadFile } from 'antd/es/upload/interface';
 import {
     Cascader,
     DatePicker,
     Form,
+    Image,
     Input,
     InputNumber,
     Mentions,
+    message,
     Select,
     TimePicker,
     Table,
@@ -34,8 +40,10 @@ function CustomModalDocument(props) {
     const [modalText, setModalText] = useState('Content of the modal');
     const { Option } = Select;
     const dateFormat = 'YYYY/MM/DD';
+    const [filesObj, setFilesObj] = useState();
     
-
+    const [fileList, setFileList] = useState([]);
+    const [imageID, setImageID] = useState();
 
     const showModal = () => {
         setOpen(true);
@@ -75,38 +83,115 @@ function CustomModalDocument(props) {
     }
 
     const addDocument = async (input) => {
-        console.log(input);
-
-        var data = {
-            CategoryID: input.category,
-            Name: input.name,
-            Status: input.status,
-            ContactID: input.contact,
-            locationID: input.location,
-            CompanyID: input.company,
-            Comments: input.comment,
-            ExpirationDate: convert(input.date),
+        console.log(fileList);
+        console.log(newFile?.uid);
+        if (!(fileList == undefined)) {
+            const files = new FormData();
+            fileList.forEach((file) => {
+                files.append('files', file);
+            });
+            setUploading(true);
+            console.log(files);
+            // You can use any AJAX library you like
+            var response = await fetch('https://localhost:7174/api/Files', {
+                method: 'POST',
+                body: files,
+            })
+            setUploading(false);
+            var newFile = await response.json();
+            //setImageID(newFile.uid);
+            console.log(newFile);
         }
-        console.log(data);
-        var response = await fetch('https://localhost:7174/api/DocumentModels', {
-            method: 'POST',
-            mode: 'cors',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Authorization': `${cookies.Authorization}`
-            }),
-            body: JSON.stringify(data)
+        if (dataSource == undefined) {
+            var CreateUpdateDocumentcs = {
+                CategoryID: input.category,
+                Name: input.name,
+                Status: input.status,
+                ContactID: input.contact,
+                LocationID: input.location,
+                CompanyID: input.company,
+                Comments: input.comment,
+                ExpirationDate: convert(input.date),
+                fileID: newFile?.id,
+            }
+            console.log(imageID);
+            console.log(JSON.stringify({ CreateUpdateDocumentcs }));
+            var response = await fetch('https://localhost:7174/api/DocumentModels/Document', {
+                method: 'POST',
+                mode: 'cors',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+                body: JSON.stringify(CreateUpdateDocumentcs)
 
-        });
-        //var newContactLocation = locations.filter(x => x.value == input?.location);
-        var newContact = await response.json();
+            });
+            //var newContactLocation = locations.filter(x => x.value == input?.location);
+            var newContact = await response.json();
+            props.update(newContact);
+
+            console.log(FileList);
+            console.log(newContact);
+
+        }
+        else {
+            var CreateUpdateNotifies = (dataSource.map((document, index) => ({
+                Days: document.days,
+                ContactID: document.idContact,
+                Send: false,
+            })));
+            //console.log(createUpdateNotifies[0].ContactID);
+            var CreateUpdateDocumentcs = {
+                CategoryID: input.category,
+                Name: input.name,
+                Status: input.status,
+                ContactID: input.contact,
+                LocationID: input.location,
+                CompanyID: input.company,
+                Comments: input.comment,
+                ExpirationDate: convert(input.date),
+                fileID: newFile?.id,
+            }
+
+            //console.log(JSON.stringify({ CreateUpdateDocumentcs, createUpdateNotifies}));
+            var response2 = await fetch('https://localhost:7174/api/DocumentModels/Notify', {
+                method: 'POST',
+                mode: 'cors',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+                body: JSON.stringify({ CreateUpdateDocumentcs, CreateUpdateNotifies})
+
+            });
+           
+
+
+            //var newContactLocation = locations.filter(x => x.value == input?.location);
+            var newContact2 = await response2.json();
+            props.update(newContact2);
+        }
         //console.log({ ...newContact, viewLocation: { id: newContactLocation[0]?.value, name: newContactLocation[0]?.label } });
-        console.log(newContact);
-        props.update(newContact);
+        //console.log(JSON.stringify({ CreateUpdateDocumentcs }, { createUpdateNotifies }));
+        //console.log(newContact);
+        
 
     }
     const editDocument = async (input) => {
-        var data = {
+
+
+        var CreateUpdateNotifies = (dataSource.map((document, index) => ({
+            id: document?.id,
+            Days: document.days,
+            ContactID: document.idContact,
+            Send: false,
+        })));
+
+
+
+
+
+        var CreateUpdateDocumentcs = {
             ID: documentObject.id,
             CategoryID: input.category,
             Name: input.name,
@@ -125,7 +210,8 @@ function CustomModalDocument(props) {
                 'Content-Type': 'application/json',
                 'Authorization': `${cookies.Authorization}`
             }),
-            body: JSON.stringify(data)
+            body: JSON.stringify({ CreateUpdateDocumentcs, CreateUpdateNotifies })
+            //body: JSON.stringify(data)
 
         })
 
@@ -183,7 +269,130 @@ function CustomModalDocument(props) {
         }
     }
 
+    // Upload
 
+
+    const [uploading, setUploading] = useState(false);
+
+
+    const handleUpload = async() => {
+        const files = new FormData();
+        fileList.forEach((file) => {
+            files.append('files', file);
+        });
+        setUploading(true);
+        console.log(files);
+        // You can use any AJAX library you like
+        var response = await fetch('https://localhost:7174/api/Files', {
+            method: 'POST',
+            body: files,
+        })
+        setUploading(false);
+        var newFile = await response.json();
+        setImageID(newFile.id);
+        console.log(newFile);
+            
+    };
+
+    const handleDeleteFile = async () => {
+        var response = await fetch('https://localhost:7174/api/Files/' + filesObj.id, {
+            method: 'DELETE',
+        })
+        setFilesObj(undefined);
+    }
+
+    const propss = {
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+        },
+        beforeUpload: (file) => {
+            setFileList([...fileList, file]);
+
+            return false;
+        },
+        fileList,
+    };
+
+
+
+
+
+/*
+    
+    
+    const [uploading, setUploading] = useState(false);
+
+    const handleUpload = () => {
+        const formData = new FormData();
+        fileList.forEach((file) => {
+            formData.append('files[]', file);
+        });
+        setUploading(true);*/
+
+        /*
+        console.log(fileList);FileReader();
+        reader.addEventListener('load', (event) => {
+            img.src = event.target.result;
+        });
+        reader.readAsDataURL(file);
+        console.log(fileList);*/
+
+        /*
+        // You can use any AJAX library you like
+        fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((res) => res.json())
+            .then(() => {
+                setFileList([]);
+                message.success('upload successfully.');
+            })
+            .catch(() => {
+                message.error('upload failed.');
+            })
+            .finally(() => {
+                setUploading(false);
+            });*/
+    //};
+
+
+    /*
+    const setFileValue = async (e) => {
+        console.log(e.fileList[0]);
+        setFileName(e.fileList[0]);
+        setFile(e.fileList[0].name);
+    }
+
+
+    const prop =  {
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+            console.log(fileList);
+        },
+        beforeUpload: (file) => {
+
+            
+            setFileList([...fileList, file]);
+            console.log(file);
+
+
+
+            return false;
+        },
+        fileList,
+
+};
+*/
+
+
+    //
 
 
 
@@ -229,7 +438,7 @@ function CustomModalDocument(props) {
 
     const EditableContext = React.createContext (null);
 
-
+      
     const EditableRow  = ({ index, ...props }) => {
         const [form] = Form.useForm();
         return (
@@ -310,13 +519,25 @@ function CustomModalDocument(props) {
         console.log(notifyContact);
     }
 
-        const [dataSource, setDataSource] = useState ([]);
+    const [dataSource, setDataSource] = useState([]);
 
         const [count, setCount] = useState(2);
 
-    const handleDelete = (key) => {
+    const handleDelete = (key, id) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
+        fetch('https://localhost:7174/api/NotifyModels/' + key, {
+            method: 'DELETE',
+            mode: 'cors',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `${cookies.Authorization}`
+            }),
+
+        })
+
+        console.log(id);
+
     };
 
     const defaultColumns = [
@@ -342,7 +563,7 @@ function CustomModalDocument(props) {
                 dataIndex: 'operation',
                 render: (_, record) =>
                     dataSource.length >= 1 ? (
-                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key, record.idContact)}>
                             <a>Delete</a>
                         </Popconfirm>
                     ) : null,
@@ -357,11 +578,23 @@ function CustomModalDocument(props) {
                 contact: notifyContact.key,
                 days: '3',
                 idContact: notifyContact.value,
-            };
+        };
+        console.log(dataSource);
+        if (dataSource ==  undefined) {
+            
+            var arr = [];
+            arr.push(newData);
+            setDataSource(arr);
+        }
+        else {
             setDataSource([...dataSource, newData]);
+        }
+         
+        
+            
         setCount(count + 1);
         console.log(dataSource);
-        };
+     };
 
         const handleSave = (row) => {
             const newData = [...dataSource];
@@ -399,7 +632,71 @@ function CustomModalDocument(props) {
 
 
 
+    async function fetchLocation() {
 
+
+        const response = await fetch('https://localhost:7174/api/LocationModels',
+            {
+
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+            });
+        let data = await response.json();
+        const optionsforSelect = data.map((location, index) => ({
+
+            value: location.id,
+            label: location.name,
+
+        }))
+        console.log(data);
+        setLocations(data);
+
+    };
+
+    async function fetchCategory() {
+
+        const response = await fetch('https://localhost:7174/api/CategoryModels',
+            {
+
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+            });
+        let data = await response.json();
+        console.log(data);
+        setCategory(data);
+    };
+    async function fetchContacts() {
+
+        const response = await fetch('https://localhost:7174/api/ContactsModels',
+            {
+
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+            });
+        let data = await response.json();
+        console.log(data);
+        setContacts(data);
+    };
+    async function fetchCompany() {
+
+        const response = await fetch('https://localhost:7174/api/CompanyModels',
+            {
+
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Authorization': `${cookies.Authorization}`
+                }),
+            });
+        let data = await response.json();
+        console.log(data);
+        setCompany(data);
+    };
 
 
    
@@ -421,84 +718,26 @@ function CustomModalDocument(props) {
         console.log(dayjs(documentObject?.expirationDate));
         console.log(documentObject);
 
-        setDataSource(documentObject?.notify.map((document, index) => ({
-            idContact: document.id,
-            key: document.id,
-            days: document.days,
-            contact : document?.contactModel?.firstName,
-        })));
+        setFilesObj(documentObject?.files[0]);
         
 
+        setDataSource(documentObject?.notify.map((document, index) => ({
+            idContact: document.contactModel.id,
+            id: document.id,
+            key: document.id,
+            days: document.days,
+            contact: document?.contactModel?.firstName,
+        })));
+        console.log(dataSource);
 
-        async function fetchLocation() {
 
-
-            const response = await fetch('https://localhost:7174/api/LocationModels',
-                {
-
-                    headers: new Headers({
-                        'Content-Type': 'application/json',
-                        'Authorization': `${cookies.Authorization}`
-                    }),
-                });
-            let data = await response.json();
-            const optionsforSelect = data.map((location, index) => ({
-
-                value: location.id,
-                label: location.name,
-
-            }))
-            console.log(data);
-            setLocations(data);
-
-        };
-
-        async function fetchCategory() {
-
-            const response = await fetch('https://localhost:7174/api/CategoryModels',
-                {
-
-                    headers: new Headers({
-                        'Content-Type': 'application/json',
-                        'Authorization': `${cookies.Authorization}`
-                    }),
-                });
-            let data = await response.json();
-            console.log(data);
-            setCategory(data);
-        };
-        async function fetchContacts() {
-
-            const response = await fetch('https://localhost:7174/api/ContactsModels',
-                {
-
-                    headers: new Headers({
-                        'Content-Type': 'application/json',
-                        'Authorization': `${cookies.Authorization}`
-                    }),
-                });
-            let data = await response.json();
-            console.log(data);
-            setContacts(data);
-        };
-        async function fetchCompany() {
-
-            const response = await fetch('https://localhost:7174/api/CompanyModels',
-                {
-
-                    headers: new Headers({
-                        'Content-Type': 'application/json',
-                        'Authorization': `${cookies.Authorization}`
-                    }),
-                });
-            let data = await response.json();
-            console.log(data);
-            setCompany(data);
-        };
+       
         fetchCompany();
         fetchContacts();
         fetchLocation();
         fetchCategory();
+        console.log(filesObj);
+
     }, [documentObject]);
 
     
@@ -668,13 +907,42 @@ function CustomModalDocument(props) {
                         </Select>
                     </Form.Item>
 
+                    
 
+                    <Input.Group compact>
+                    <Upload {...propss}>
+                        <Button icon={<UploadOutlined />}>Select File</Button>
+                    </Upload>
+                    {/*<Button
+                        type="primary"
+                        onClick={handleUpload}
+                        disabled={fileList.length === 0}
+                        loading={uploading}
+                        style={{ marginTop: 16 }}
+                    >
+                        {uploading ? 'Uploading' : 'Start Upload'}
+                    </Button>*/}
 
+                    {console.log(filesObj) }
+                    {
+                        
+                        filesObj !== undefined ?
+                    
+                    <Button
+                        
+                        onClick={handleDeleteFile}
+                        icon={<UploadOutlined />}
+                    >
+                        Delete File
+                            </Button>
+                            : null
+                    }
 
+                    </Input.Group>
 
                     <Form.Item wrapperCol={{ span: 24 }}>
                         <Button block type="primary" htmlType="submit">
-                            {props.status == 1 ? "Add Contact" : "Edit"}
+                            {props.status == 1 ? "Add Document" : "Edit"}
                         </Button>
                     </Form.Item>
                 </Form>

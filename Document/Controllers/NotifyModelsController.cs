@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Document.Data;
 using Document.Models;
+using Document.Services;
 
 namespace Document.Controllers
 {
@@ -16,9 +17,12 @@ namespace Document.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public NotifyModelsController(ApplicationDbContext context)
+        private readonly INotifyService _notifyService;
+
+        public NotifyModelsController(ApplicationDbContext context, INotifyService notifyService)
         {
             _context = context;
+            _notifyService = notifyService;
         }
 
         // GET: api/NotifyModels
@@ -53,47 +57,22 @@ namespace Document.Controllers
         // PUT: api/NotifyModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotifyModel(Guid id, NotifyModel notifyModel)
+        public async Task<ActionResult<ViewNotify>> PutNotifyModel(Guid id, CreateUpdateNotify notifyModel)
         {
-            if (id != notifyModel.ID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(notifyModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NotifyModelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return await _notifyService.UpdateNotifyByID(notifyModel, id);
         }
 
         // POST: api/NotifyModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<NotifyModel>> PostNotifyModel(NotifyModel notifyModel)
+        public async Task<ActionResult<ViewNotify>> PostNotifyModel(CreateUpdateNotify notifyModel)
         {
-          if (_context.NotifyModels == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.NotifyModels'  is null.");
-          }
-            _context.NotifyModels.Add(notifyModel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetNotifyModel", new { id = notifyModel.ID }, notifyModel);
+            var notify = await _notifyService.CreateNotify(notifyModel);
+            if (notify == null)
+            {
+                return NotFound();
+            }
+            return (notify);
         }
 
         // DELETE: api/NotifyModels/5

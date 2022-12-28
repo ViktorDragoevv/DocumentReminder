@@ -1,7 +1,7 @@
 ﻿import React, { useRef, useState, useEffect } from "react";
 import { SearchOutlined } from '@ant-design/icons';
 import { InputRef } from 'antd';
-import { Button, Input, Space, Table } from 'antd';
+import { Button, Input, Space, Table, Image } from 'antd';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import { FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
@@ -10,6 +10,7 @@ import CustomModal from "./CustomModal";
 import CustomTable from "./CustomTable";
 import CustomModalDocument from "./CustomModalDocument";
 import { useCookies } from "react-cookie";
+import CustomModalNotifications from "./CustomModalNotifications";
 
 
 
@@ -49,19 +50,20 @@ function Documents() {
 
             key: document.id,
             id: document.id,
-            name: document.name,
-            status: document.status,
-            comments: document.comments,
+            name: document?.name,
+            status: document?.status,
+            comments: document?.comments,
             viewCategory: document?.viewCategory,
-            categoryName: document?.viewCategory.categoryName,
+            categoryName: document?.viewCategory?.categoryName,
             viewCompany: document?.viewCompany,
-            companyName : document?.viewCompany.name,
+            companyName : document?.viewCompany?.name,
             viewContact: document?.viewContact,
-            locationName: document?.viewLocation.name,
+            locationName: document?.viewLocation?.name,
             viewLocation: document?.viewLocation,
-            contactName: document?.viewContact.firstName,
+            contactName: document?.viewContact?.firstName,
             expirationDate: document?.expirationDate,
-            notify : document?.notify
+            notify: document?.notify,
+            files: document?.files,
 
         }))
         return mappedArray;
@@ -91,13 +93,16 @@ function Documents() {
         setDataDocuments(dataDocuments.filter((item) => item.id !== selectedDocumentObject.id));
     };
 
-    const addDocumentFromChild = newContact => {
-        setDataDocuments(AddKeyProp([...dataDocuments, newContact]));
-        console.log(newContact);
+    const addDocumentFromChild = newDocument => {
+        //var newDocWithProps = AddKeyProp([{newDocument}]);
+        setDataDocuments(AddKeyProp([...dataDocuments, newDocument]));
+        //setDataDocuments([...dataDocuments, ...newDocWithProps]);
+        //console.log([...dataDocuments, ...newDocWithProps]);
+        console.log(AddKeyProp([...dataDocuments, newDocument]));
     }
 
-    const updateDocumentyFromChild = newContact => {
-        let changedContact = dataDocuments.map(a => a.id == newContact.id ? newContact : a);
+    const updateDocumentyFromChild = newDocument => {
+        let changedContact = dataDocuments.map(a => a.id == newDocument.id ? newDocument : a);
         setDataDocuments(AddKeyProp(changedContact));
 
     }
@@ -197,16 +202,22 @@ function Documents() {
     });
 
 
+
+
+    
+
+
+
     const hasSelected = selectedRowKeys.length > 0;
 
     const columns = [
-        {
+        /*{
             title: 'id',
             dataIndex: 'id',
             key: 'id',
             width: '30%',
             ...getColumnSearchProps('id'),
-        },
+        },*/
         {
             title: 'name',
             dataIndex: 'name',
@@ -270,6 +281,19 @@ function Documents() {
             ...getColumnSearchProps('expirationDate'),
             sorter: (a, b) => a.expirationDate.length - b.expirationDate.length,
             sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'file',
+            key: 'files',
+            fixed: 'right',
+            width: 100,
+            render: (t, r) => (
+                r.files != undefined ?
+                <Image.PreviewGroup>
+                    <Image width={150} alt={r?.files[0]?.imageName} src={`https://localhost:7174/Images/${r?.files[0]?.imageName}`} />
+                </Image.PreviewGroup >
+                : ''
+            ),
         },
 
 

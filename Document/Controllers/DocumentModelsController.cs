@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Document.Data;
 using Document.Models;
 using Document.Services;
+using System.Collections;
+using System.Text.Json;
 
 namespace Document.Controllers
 {
@@ -17,6 +19,7 @@ namespace Document.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IDocumentService _documentService;
+
 
         public DocumentModelsController(ApplicationDbContext context, IDocumentService documentService)
         {
@@ -62,15 +65,25 @@ namespace Document.Controllers
 
         // PUT: api/DocumentModels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         public async Task<ActionResult<ViewDocument>> PutDocumentModel(Guid id, CreateUpdateDocumentcs documentModel)
         {
             return await _documentService.UpdateDocumentByID(documentModel, id);
+        }*/
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ViewDocument>> PutDocumentModelWithNotify(DocumentWithNotifications documentWithNotifications)
+        {
+            return await _documentService.UpdateDocumentByIDWithNotify(documentWithNotifications.CreateUpdateDocumentcs, documentWithNotifications.CreateUpdateDocumentcs.ID, documentWithNotifications.createUpdateNotifies);
         }
+
+
+
 
         // POST: api/DocumentModels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Route("Document")]
         public async Task<ActionResult<ViewDocument>> PostDocumentModel(CreateUpdateDocumentcs documentModel)
         {
             var document = await _documentService.CreateDocument(documentModel);
@@ -80,6 +93,47 @@ namespace Document.Controllers
             }
             return (document);
         }
+
+
+
+
+
+        [HttpPost]
+        [Route("Notify")]
+        public async Task<ActionResult<ViewDocument>> PostDocumentWithNotify(DocumentWithNotifications documentWithNotifications)
+        {
+            var document = await _documentService.CreateDocumentWithNotifications(documentWithNotifications.CreateUpdateDocumentcs, documentWithNotifications.createUpdateNotifies);
+            if (document == null)
+            {
+                return NotFound();
+
+            }
+            
+            return (document);
+        }
+
+
+        /*[Route("Notify")]
+        [HttpPost]
+        public async Task<ActionResult<ViewDocument>> PostDocumentWithNotify(ArrayList paramList)
+        {
+            if (paramList.Count > 0)
+            {
+                CreateUpdateDocumentcs documentModel = JsonSerializer.Deserialize<CreateUpdateDocumentcs>(paramList[0].ToString());
+                IEnumerable<CreateUpdateNotify> notifyModels = JsonSerializer.Deserialize<IEnumerable<CreateUpdateNotify>>(paramList[1].ToString());
+
+                var document = await _documentService.CreateDocumentWithNotifications(documentModel, notifyModels);
+                if (document == null)
+                {
+                    return NotFound();
+
+                }
+
+                return (document);
+
+            }
+            else return NotFound();
+        }*/
 
         // DELETE: api/DocumentModels/5
         [HttpDelete("{id}")]

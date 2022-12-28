@@ -1,9 +1,10 @@
 ﻿namespace Document.Models
 {
-    public class ViewFiles
+    public class CreateUpdateFile
     {
-        public Guid ID { get; set; }
+
         public string ImageName { get; set; }
         public string ImagePath { get; set; }
+        public Guid? DocumentID { get; set; }
     }
 }
