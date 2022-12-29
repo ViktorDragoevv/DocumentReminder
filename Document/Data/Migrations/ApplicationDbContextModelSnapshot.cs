@@ -99,7 +99,7 @@ namespace Document.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("CategoryModel");
+                    b.ToTable("CategoryModel", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.CompanyModel", b =>
@@ -135,7 +135,7 @@ namespace Document.Data.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("CompanyModel");
+                    b.ToTable("CompanyModel", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.ContactsModel", b =>
@@ -169,7 +169,7 @@ namespace Document.Data.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("ContactsModel");
+                    b.ToTable("ContactsModel", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.DocumentModel", b =>
@@ -219,7 +219,7 @@ namespace Document.Data.Migrations
 
                     b.HasIndex("LocationID");
 
-                    b.ToTable("DocumentModels");
+                    b.ToTable("DocumentModels", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.Files", b =>
@@ -243,7 +243,7 @@ namespace Document.Data.Migrations
 
                     b.HasIndex("DocumentID");
 
-                    b.ToTable("Files");
+                    b.ToTable("Files", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.LocationModel", b =>
@@ -274,7 +274,7 @@ namespace Document.Data.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("LocationModel");
+                    b.ToTable("LocationModel", (string)null);
                 });
 
             modelBuilder.Entity("Document.Models.NotifyModel", b =>
@@ -303,7 +303,7 @@ namespace Document.Data.Migrations
 
                     b.HasIndex("DocumentID");
 
-                    b.ToTable("NotifyModels");
+                    b.ToTable("NotifyModels", (string)null);
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>

@@ -13,6 +13,11 @@ using System.Text;
 using Document.Infrastructure;
 using Document.AuthServices;
 using Document.Middleware.RateLimiting;
+using Hangfire;
+using System.Configuration;
+using Document.NewFolder1;
+using Microsoft.Extensions.Configuration;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 var policyName = "_myAllowSpecificOrigins"; // cors
@@ -78,8 +83,25 @@ builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IFileService, FileService>();
 
 
-
+builder.Services.AddTransient<ISendMailServices, SendMailServices>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+
+
+//Hangfire
+
+builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHangfireServer();
+builder.Services.AddControllers();
+
+
+
+
+
+
+//builder.Services.AddTransient<ISendMailServices, SendMailServices>();
+
 
 
 
@@ -184,6 +206,17 @@ var app = builder.Build();
 
 // Use Rate Limiting
 app.UseRateLimiting();
+
+//Hangfire
+app.UseHangfireDashboard("/mydashboard");
+IConfiguration configuration = app.Configuration;
+IWebHostEnvironment environment = app.Environment;
+var documentService = app.Services.GetService<DocumentService>();
+var notifyRepository = app.Services.GetService<NotifyRepository>();
+SendMailServices _sendMailServices = new SendMailServices(environment, configuration, documentService, notifyRepository);
+RecurringJob.AddOrUpdate("Send Mail : Runs Every 5 Min", () => _sendMailServices.SendEmail(), builder.Configuration["CronTime"]);
+//app.MapHangfireDashboard();
+//
 
 
 
