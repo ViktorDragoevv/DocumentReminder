@@ -18,6 +18,8 @@ using System.Configuration;
 using Document.NewFolder1;
 using Microsoft.Extensions.Configuration;
 using System;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var policyName = "_myAllowSpecificOrigins"; // cors
@@ -33,12 +35,21 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-//builder.Services.AddAuthentication().AddIdentityServerJwt();
-
+//
+builder.Services.AddAuthentication().AddIdentityServerJwt();
+//
 //builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRD-TOKEN");
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+
+/*builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Default Lockout settings.
+
+    options.Tokens.AuthenticatorTokenProvider.
+});*/
 
 /*
 builder.Services.AddCors(options =>
@@ -202,6 +213,8 @@ builder.Services.AddRateLimiting(builder.Configuration);
 
 
 
+
+
 var app = builder.Build();
 
 // Use Rate Limiting
@@ -217,6 +230,7 @@ SendMailServices _sendMailServices = new SendMailServices(environment, configura
 RecurringJob.AddOrUpdate("Send Mail : Runs Every 5 Min", () => _sendMailServices.SendEmail(), builder.Configuration["CronTime"]);
 //app.MapHangfireDashboard();
 //
+
 
 
 

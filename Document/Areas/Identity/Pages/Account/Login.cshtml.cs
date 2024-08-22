@@ -155,6 +155,22 @@ namespace Document.Areas.Identity.Pages.Account
                 }
                 if (result.RequiresTwoFactor)
                 {
+
+                    var token = _authService.GenerateJwtToken(user.Id, Input.Email, _appSettings.Key, _appSettings.Issuer, _appSettings.Audience);
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        _logger.LogInformation("User logged in.");
+
+                        var cookieOptions = new CookieOptions()
+                        {
+                            Path = "/",
+                            IsEssential = true,
+                            Secure = true,
+                            HttpOnly = true,
+                        };
+
+                        HttpContext.Response.Cookies.Append("Authorization", "Bearer " + token.ToString());
+                    }
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
                 if (result.IsLockedOut)

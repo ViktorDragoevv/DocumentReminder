@@ -36,6 +36,7 @@ function Contacts() {
             setData(AddKeyProp(data));
             
             console.log(data);
+            console.log(cookies);
         };
 
         fetchData();
@@ -193,13 +194,7 @@ function Contacts() {
     const hasSelected = selectedRowKeys.length > 0;
 
     const columns = [
-         {
-             title: 'id',
-             dataIndex: 'id',
-             key: 'id',
-             width: '30%',
-             ...getColumnSearchProps('id'),
-         },
+
         {
             title: 'firstName',
             dataIndex: 'firstName',

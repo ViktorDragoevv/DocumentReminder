@@ -3,6 +3,7 @@ import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from '
 import { Link } from 'react-router-dom';
 import { LoginMenu } from './api-authorization/LoginMenu';
 import './NavMenu.css';
+import { ContainerOutlined } from '@ant-design/icons';
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
@@ -13,20 +14,20 @@ export class NavMenu extends Component {
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.state = {
       collapsed: true
-    };
+      };
   }
 
   toggleNavbar () {
     this.setState({
       collapsed: !this.state.collapsed
     });
-  }
+    }
 
-  render() {
+    render() {
     return (
       <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
-          <NavbarBrand tag={Link} to="/">Document</NavbarBrand>
+            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
+                <NavbarBrand tag={Link} to="/"><ContainerOutlined className="logo-icon" />Document</NavbarBrand>
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
             <ul className="navbar-nav flex-grow">
@@ -52,7 +53,7 @@ export class NavMenu extends Component {
               </LoginMenu>
             </ul>
           </Collapse>
-        </Navbar>
+            </Navbar>
       </header>
     );
   }

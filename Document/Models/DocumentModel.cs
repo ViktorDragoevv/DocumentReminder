@@ -26,6 +26,7 @@ namespace Document.Models
         public virtual ICollection<NotifyModel>? NotifyModels { get; set; }
 
 
+
         public void Copy(CreateUpdateDocumentcs createUpdateDocument)
         {
             ID = createUpdateDocument.ID;

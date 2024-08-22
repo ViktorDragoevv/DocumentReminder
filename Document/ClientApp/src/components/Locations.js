@@ -175,13 +175,13 @@ function Locations() {
     const hasSelected = selectedRowKeys.length > 0;
 
     const columns = [
-        {
+        /*{
             title: 'id',
             dataIndex: 'id',
             key: 'id',
             width: '30%',
             ...getColumnSearchProps('id'),
-        },
+        },*/
         {
             title: 'name',
             dataIndex: 'name',

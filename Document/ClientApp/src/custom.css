@@ -17,7 +17,13 @@ code {
   border-color: #1861ac;
 }
 
+.logo-icon {
+    margin-right: 6px;
+}
 
+.anticon {
+    display: inline-flex;
+}
 
 
 

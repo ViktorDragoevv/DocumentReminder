@@ -45,14 +45,6 @@ namespace Document.NewFolder1
                     }
                 }
             }
-
-
-
-
-            
-
-
-
             return new ResponseVM
             {
                 message = "message send successfully"
@@ -71,24 +63,18 @@ namespace Document.NewFolder1
 
             var mail = new MimeMessage();
             mail.From.Add(MailboxAddress.Parse(_email));
-            //email.From.Add(MailboxAddress.Parse("document_reminder@mail.bg"));
             mail.To.Add(MailboxAddress.Parse(email));
             mail.Subject = $"Dear {contactName}, you have new expiring document";
             mail.Body = new TextPart(TextFormat.Plain) { Text = $"Dear {contactName}, document {name} expires after {days} days!" };
-
             
             var existingNotify = await _notifyRepository.GetByIdAsync(notifyID);
             existingNotify.Send = true;
             await _notifyRepository.UpdateAsync(existingNotify);
-
-            //neshto s izchakvaneto
             using var smtp = new SmtpClient();
             smtp.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
             smtp.Authenticate(_email, _epass);
             smtp.Send(mail);
             smtp.Disconnect(true);
-
-
 
         }
     }

@@ -14,7 +14,7 @@ namespace Document.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ContactsModelsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
